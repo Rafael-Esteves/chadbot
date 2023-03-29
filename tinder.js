@@ -60,7 +60,7 @@ export class TinderApi {
       return await response.json();
     } catch (error) {
       console.log(error);
-      return error;
+      return await error.json();
     }
   };
 
