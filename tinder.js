@@ -1,196 +1,182 @@
-const token = "";
-
-const authHeaders = {
-  "X-Auth-Token": token,
-  "content-type": "application/json",
-  "User-agent": "Tinder/7.5.3 (iPhone; iOS 10.3.2; Scale/2.00)",
-  "accept-language": "pt,pt-BR,en-US,en",
-};
-
-const preAuthHeaders = {
-  "content-type": "application/json",
-  "User-agent": "Tinder/7.5.3 (iPhone; iOS 10.3.2; Scale/2.00)",
-};
-
-const fetchData = async (url, method = "GET", body, headers = authHeaders) => {
-  try {
-    console.log("headers", headers);
-    console.log("body", body);
-    const res = await fetch(`https://api.gotinder.com/${url}`, {
-      method,
-      body,
-      headers: headers,
-    });
-    return await res.json();
-  } catch (e) {
-    console.log("Something broke", e);
-  }
-};
-
-export const sendCode = async (number) => {
-  try {
-    console.log(number);
-    const response = await fetchData(
-      `v2/auth/sms/send?auth_type=sms`,
-      "POST",
-      {
-        phone_number: number,
-      },
-      preAuthHeaders
-    );
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-    alert("An error has occurred.");
-  }
-};
-
-const validateCode = async (code, number) => {
-  try {
-    const data = {
-      otp_code: code,
-      phone_number: number,
+export class TinderApi {
+  constructor(token) {
+    this.token = token;
+    this.authHeaders = {
+      "X-Auth-Token": token,
+      "content-type": "application/json",
+      "User-agent": "Tinder/7.5.3 (iPhone; iOS 10.3.2; Scale/2.00)",
+      "accept-language": "pt,pt-BR,en-US,en",
     };
-    const response = await fetchData(
-      `v2/auth/sms/validate?auth_type=sms`,
-      "POST",
-      data,
-      preAuthHeaders
-    );
-    if (response.status === 200) {
-      if (response.data.data.validated) {
-        return response.data.data.refresh_token;
-      } else {
-        alert("An error has occurred on refresh token.");
-      }
-    } else {
-      throw new Error("An error has occurred with the status");
+  }
+  static preAuthHeaders = {
+    "content-type": "application/json",
+    "User-agent": "Tinder/7.5.3 (iPhone; iOS 10.3.2; Scale/2.00)",
+  };
+
+  static sendCode = async (number) => {
+    try {
+      const response = await fetch(
+        `https://api.gotinder.com/v2/auth/sms/send?auth_type=sms`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            phone_number: number,
+          }),
+          headers: TinderApi.preAuthHeaders,
+        }
+      );
+      return await response.json();
+    } catch (error) {
+      return error;
     }
-  } catch (error) {
-    console.log(error);
-    alert("An error has occurred on validate code.");
-  }
-};
+  };
 
-export const getApiToken = async (code, number) => {
-  try {
-    const refresh_token = await validateCode(code, number);
-    const response = await fetchData(
-      `v2/auth/login/sms`,
-      {
-        refresh_token: refresh_token,
-      },
-      { headers: preAuthHeaders }
-    );
-    if (response.status === 200) {
-      if (response.data.data.api_token) {
-        localStorage.setItem(
-          "tinder_api_key",
-          JSON.stringify(response.data.data.api_token)
-        );
-      } else {
-        alert("An error has occurred on refresh token.");
-      }
-    } else {
-      throw new Error("An error has occurred with the api token");
+  static getApiToken = async (code, number) => {
+    try {
+      const refresh_resp = await fetch(
+        `https://api.gotinder.com/v2/auth/sms/validate?auth_type=sms`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            otp_code: code,
+            phone_number: number,
+          }),
+          headers: TinderApi.preAuthHeaders,
+        }
+      );
+      const refresh = await refresh_resp.json();
+      const response = await fetch(
+        `https://api.gotinder.com/v2/auth/login/sms`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            refresh_token: refresh.data.refresh_token,
+          }),
+          headers: TinderApi.preAuthHeaders,
+        }
+      );
+      //response.data.api_token
+
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+      return error;
     }
-  } catch (error) {
-    console.log(error);
-    alert("An error has occurred on get api token.");
-  }
-};
+  };
 
-export const getMatches = async () => {
-  try {
-    const matchRes = (await fetchData(
-      `v2/matches?count=100&is_tinder_u=false&locale=pt`
-    )) || { data: { matches: [] } };
+  getMatches = async () => {
+    try {
+      const matchRes = await fetch(
+        `https://api.gotinder.com/v2/matches?count=100&is_tinder_u=false&locale=pt`,
+        {
+          method: "GET",
+          headers: this.authHeaders,
+        }
+      );
+      const res = await matchRes.json();
+      return res.data.matches;
+    } catch (e) {
+      console.log(e);
+      return;
+    }
+  };
 
-    return matchRes.data.matches;
-  } catch (e) {
-    console.log(e);
-    return;
-  }
-};
+  getSelf = async () => {
+    try {
+      const res = await fetch(
+        "https://api.gotinder.com/v2/profile?locale=pt&include=account%2Cavailable_descriptors%2Cboost%2Cbouncerbypass%2Ccontact_cards%2Cemail_settings%2Cfeature_access%2Cinstagram%2Clikes%2Cprofile_meter%2Cnotifications%2Cmisc_merchandising%2Cofferings%2Conboarding%2Cplus_control%2Cpurchase%2Creadreceipts%2Cspotify%2Csuper_likes%2Ctinder_u%2Ctravel%2Ctutorials%2Cuser%2Cpaywalls",
+        {
+          headers: this.authHeaders,
+          method: "GET",
+        }
+      );
+      const response = await res.json();
+      return response.data;
+    } catch (e) {
+      console.log(e);
+      return;
+    }
+  };
 
-export const getProfile = async (match) => {
-  try {
-    const res = await fetch(
-      `https://api.gotinder.com/user/${match.person._id}?locale=pt`,
-      {
-        method: "GET",
-        headers: headers,
-      }
-    );
-    const profile = await res.json();
-    return profile.results;
-  } catch (e) {
-    console.log("Something broke", e);
-  }
-};
+  getProfile = async (match) => {
+    try {
+      const res = await fetch(
+        `https://api.gotinder.com/user/${match.person._id}?locale=pt`,
+        {
+          method: "GET",
+          headers: this.authHeaders,
+        }
+      );
+      const profile = await res.json();
+      return profile.results;
+    } catch (e) {
+      console.log("Something broke", e);
+    }
+  };
 
-export const sendMessage = async (match, message) => {
-  try {
-    const res = await fetch(
-      `https://api.gotinder.com/user/matches/${match.id}`,
-      {
-        method: "post",
-        body: JSON.stringify({
-          message: message,
-        }),
-        headers: headers,
-      }
-    );
-    const response = await res.json();
-    return response;
-  } catch (e) {
-    console.log("Erro ao enviar mensagem:", e);
-  }
-};
+  sendMessage = async (match, message) => {
+    try {
+      const res = await fetch(
+        `https://api.gotinder.com/user/matches/${match.id}`,
+        {
+          method: "post",
+          body: JSON.stringify({
+            message: message,
+          }),
+          headers: this.authHeaders,
+        }
+      );
+      const response = await res.json();
+      return response;
+    } catch (e) {
+      console.log("Erro ao enviar mensagem:", e);
+    }
+  };
 
-export const unmatch = async (match) => {
-  try {
-    const res = await fetch(
-      `https://api.gotinder.com/user/matches/${match._id}`,
-      {
-        method: "delete",
-        headers: headers,
-      }
-    );
-    return await res.json();
-  } catch (e) {
-    console.log("Something broke", e);
-  }
-};
+  unmatch = async (match) => {
+    try {
+      const res = await fetch(
+        `https://api.gotinder.com/user/matches/${match._id}`,
+        {
+          method: "delete",
+          headers: headers,
+        }
+      );
+      return await res.json();
+    } catch (e) {
+      console.log("Something broke", e);
+    }
+  };
 
-export const getMessages = async (match) => {
-  try {
-    const res = await fetch(
-      `https://api.gotinder.com/v2/matches/${match._id}/messages?locale=pt&count=40`,
-      {
-        headers: headers,
-      }
-    );
-    // console.log(res);
-    const json = await res.json();
-    return json.data.messages;
-  } catch (e) {
-    console.log("Something broke", e);
-  }
-};
+  getMessages = async (match) => {
+    try {
+      const res = await fetch(
+        `https://api.gotinder.com/v2/matches/${match._id}/messages?locale=pt&count=40`,
+        {
+          headers: this.authHeaders,
+        }
+      );
+      // console.log(res);
+      const json = await res.json();
+      return json.data.messages;
+    } catch (e) {
+      console.log("Something broke", e);
+    }
+  };
 
-export const like = async (id) => {
-  try {
-    const res = await fetch(`https://api.gotinder.com/like/${id}?locale=pt`, {
-      headers: headers,
-    });
-    const json = await res.json();
-    return {
-      status: json.status,
-      match: json.match,
-      likes_remaining: json.likes_remaining,
-    };
-  } catch (e) {
-    console.log("Something broke", e);
-  }
-};
+  like = async (id) => {
+    try {
+      const res = await fetch(`https://api.gotinder.com/like/${id}?locale=pt`, {
+        headers: this.authHeaders,
+      });
+      const json = await res.json();
+      return {
+        status: json.status,
+        match: json.match,
+        likes_remaining: json.likes_remaining,
+      };
+    } catch (e) {
+      console.log("Something broke", e);
+    }
+  };
+}
