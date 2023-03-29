@@ -39,16 +39,17 @@ export default async function handler(req, res) {
       if (rawMessages.length && rawMessages[0].from != profile._id) {
         console.log("Not your turn");
         continue;
-      } else {
-        const phoneNumba = rawMessages.forEach((msg) => {
-          const match = msg.message.match(phoneRegex);
-          if (match && msg.from == profile._id) return match;
-        });
-        if (phoneNumba) {
-          console.log("Gotcha: ", phoneNumba);
-          continue;
-        }
       }
+      //   } else {
+      //     const phoneNumba = rawMessages.forEach((msg) => {
+      //       const match = msg.message.match(phoneRegex);
+      //       if (match && msg.from == profile._id) return match;
+      //     });
+      //     if (phoneNumba) {
+      //       console.log("Gotcha: ", phoneNumba);
+      //       continue;
+      //     }
+      //   }
 
       const interests = profile.user_interests?.selected_interests.map(
         (interest) => interest.name
@@ -112,7 +113,8 @@ export default async function handler(req, res) {
             content: msg.message,
           };
         })
-        .reverse();
+        .reverse()
+        .slice(0, 10);
 
       const systemPrompt = () => {
         switch (rawMessages.length) {
@@ -152,14 +154,11 @@ export default async function handler(req, res) {
 
       const resp = await openai.createChatCompletion(chatBody);
 
-      console.log("unprocessed", resp.data.choices[0].message);
-
       const message = processMessage(resp.data.choices[0].message.content);
 
-      console.log(messages);
       console.log(message);
 
-      //   console.log(await tinder.sendMessage(match, message));
+      console.log(await tinder.sendMessage(match, message));
     }
     res.status(200).json({ success: true });
   } catch (err) {
