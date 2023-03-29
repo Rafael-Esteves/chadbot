@@ -152,6 +152,8 @@ export default async function handler(req, res) {
         logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100 },
       };
 
+      
+
       const resp = await openai.createChatCompletion(chatBody);
 
       const message = processMessage(resp.data.choices[0].message.content);
