@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
 import { useState, useEffect } from "react";
 import Router from "next/router";
 
@@ -18,12 +17,17 @@ export default function Home() {
         "Content-type": "application/json",
       },
     });
-    console.log(resp);
     setLoading(false);
+
+    const response = await resp.json();
+
+    if (response.error) {
+      if (response.error.status == 401) Router.push("/");
+    }
   };
   useEffect(() => {
     if (!localStorage.getItem("tinder_api_key")) Router.push("/");
-  }, []);
+  });
   return (
     <>
       <Head>
@@ -32,15 +36,27 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <div>
-          Clicando no botão o bot vai começar uma conversa com todos os novos
-          matches e vai responder todos os matches que estão na sua vez de
-          responder. Seus cornos.
+      <main
+        className={
+          "flex flex-col items-center justify-center h-screen bg-[url('/images/multi-chad.jpeg')]"
+        }
+      >
+        <div className="p-5 bg-slate-800 text-center text-white w-100">
+          <h2 className="p-3 text-xl my-5">
+            Clicando no botão o bot vai começar uma conversa com todos os novos
+            matches e vai responder todos os matches que estão na sua vez de
+            responder. Seus cornos.
+          </h2>
+          <button
+            className={`bg-blue-500 p-3 text-white w-100 ${
+              loading ? "opacity-50" : ""
+            }`}
+            disabled={loading}
+            onClick={() => chat()}
+          >
+            {loading ? "Enviando mensagens..." : "Enviar mensagens"}
+          </button>
         </div>
-        <button disabled={loading} onClick={() => chat()}>
-          {loading ? "Enviando mensagens..." : "Enviar mensagens"}
-        </button>
       </main>
     </>
   );

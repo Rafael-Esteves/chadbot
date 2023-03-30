@@ -85,13 +85,13 @@ export default async function handler(req, res) {
         : "";
 
       //   const personality = `Sua personalidade: Homem mineiro de 26 anos, morando no bairro Campeche em Florianópolis. Misterioso. Signo: Libra.`;
-      const personality = `Você é ${user.name}. Sexo ${
-        user.gender == 0 ? "masculino" : "feminino"
+      const personality = `Responda como ${user.name}, ${
+        user.gender == 0 ? "um homem" : "uma mulher"
       } ${cityFrag}.`;
 
       const style = `A mensagem deve ser escrita de maneira informal além de ser curta e direta ao ponto. A mensagem deve ter um tom de flerte. A mesagem não deve se explicar e nem se justificar. Não seja prolixo. Utilize algumas gírias para dar um tom mais descontraído à mensagem.`;
 
-      const context = `Para criar a mensagem, utilize as informações fornecidas pelo match, incluindo: ${
+      const context = `Para criar a mensagem, utilize as informações fornecidas pelo match, incluindo: Nome: ${name}, ${
         interestsString() ?? ""
       }. ${city ?? ""}. Distância entre vocês: ${distance}km. ${moreInfo?.join(
         " "
@@ -151,8 +151,6 @@ export default async function handler(req, res) {
         frequency_penalty: 1,
         logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100 },
       };
-
-      
 
       const resp = await openai.createChatCompletion(chatBody);
 
