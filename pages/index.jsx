@@ -85,7 +85,7 @@ export default function Home() {
         <title>chadbot</title>
         <meta name="description" content="More dates and more time" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.webp" />
       </Head>
       <main
         className={
