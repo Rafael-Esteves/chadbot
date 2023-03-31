@@ -221,7 +221,7 @@ export default function Home() {
         }
       >
         <div class="flex flex-col md:flex-row bg-slate-800 p-10">
-          <div class="w-full md:w-1/2 h-64 md:h-auto px-5">
+          <div class="w-full md:w-1/2  md:h-auto px-5">
             <div className="justify-left text-left">
               <h2 className="text-2xl text-white"> Settings:</h2>
               <label className="block text-white mb-2" htmlFor="style">
@@ -263,7 +263,7 @@ export default function Home() {
               />
             </div>
           </div>
-          <div class="w-full md:w-1/2 h-64 md:h-auto px-5">
+          <div class="w-full md:w-1/2 mt-5 md:h-auto px-5">
             <div className="flex-row flex justify-around">
               <div className="px-2 text-white">
                 Matches: {matches?.length ?? "loading..."}
