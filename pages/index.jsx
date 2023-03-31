@@ -44,7 +44,7 @@ export default function Home() {
     const resp = await fetch("/api/get-token", {
       method: "POST",
       body: JSON.stringify({
-        phone: phone,
+        phone: countryCode + phone,
         code: code,
       }),
       headers: {
@@ -63,7 +63,7 @@ export default function Home() {
     } else {
       setError(null);
       setShowCodeInput(true);
-      if (response.data.api_token) {
+      if (response.data) {
         localStorage.setItem("tinder_api_key", response.data.api_token);
         Router.push("/main");
       } else {
@@ -82,7 +82,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>chadbot</title>
+        <title>Chadbot</title>
         <meta name="description" content="More dates and more time" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.webp" />
@@ -95,7 +95,7 @@ export default function Home() {
         <Alert message={error} type={"error"}></Alert>
         <div className="p-5 bg-slate-800 text-left  w-100">
           <h3 className={"text-2xl text-white"}>
-            Número de celular associado ao Tinder
+            Phone number associated with Tinder
           </h3>
           <div className={"flex"}>
             <select
@@ -132,13 +132,13 @@ export default function Home() {
               }`}
               onClick={() => sendSms()}
             >
-              Enviar código
+              Send code
             </button>
           </div>
 
           {showCodeInput && (
             <div className={"mt-10 text-left"}>
-              <h3 className="text-white text-2xl">Código</h3>
+              <h3 className="text-white text-2xl">Confirmation code</h3>
               <div className="flex">
                 <input
                   className={"bg-gray-200 p-3"}
@@ -156,7 +156,7 @@ export default function Home() {
                   }`}
                   onClick={() => getToken()}
                 >
-                  Entrar
+                  Login
                 </button>
               </div>
             </div>
