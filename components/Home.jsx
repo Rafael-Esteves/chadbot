@@ -115,7 +115,7 @@ export default function Home() {
                 d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
               />
             </svg>
-            Selected Matches: {matches?.length ?? "loading..."}
+            Selected Matches: {selectedMatches?.length ?? "loading..."}
           </button>
           <button
             className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
@@ -148,7 +148,7 @@ export default function Home() {
 
         <h2 className="p-3 text-xl mt-5 text-white">
           Click chat now to generate a custom message to each of the selected
-          matches. Don't worry, you can review them before they're sent.
+          matches. Do not worry, you can review them before they are sent.
         </h2>
         <button
           className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 ${
@@ -161,7 +161,7 @@ export default function Home() {
         </button>
 
         <h2 className="p-3 text-xl mt-5 text-white">
-          Or toggle auto chat to automatically respond every 5 minutes. (Don't
+          Or toggle auto chat to automatically respond every 5 minutes. (Do not
           close this tab)
         </h2>
         <div className="text-center">
