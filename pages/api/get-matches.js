@@ -9,7 +9,6 @@ export default async function handler(req, res) {
       req.headers["accept-language"]
     );
     const response = await tinder.getMatches();
-    console.log(response);
     res.status(200).json(response);
   } catch (err) {
     res.status(err).send(err);

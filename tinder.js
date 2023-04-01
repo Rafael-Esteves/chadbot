@@ -23,7 +23,6 @@ export class TinderApi {
     if (response.status >= 200 && response.status < 300) {
       return await response.json();
     } else {
-      console.log(response);
       throw response.status;
     }
   };

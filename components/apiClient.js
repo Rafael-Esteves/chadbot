@@ -7,10 +7,7 @@ export class API {
     else window.location.href = "/";
   }
   tinderReq = async (path, body = {}) => {
-    console.log({
-      token: this.token,
-      ...body,
-    });
+
     const response = await axios
       .post(path, {
         token: this.token,

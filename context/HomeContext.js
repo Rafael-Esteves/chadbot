@@ -6,9 +6,12 @@ export const HomeProvider = (props) => {
   const [loading, setLoading] = useState(false);
   const [autoChatting, setAutoChatting] = useState(false);
   const [matches, setMatches] = useState();
-  const [selectedMatches, setSelectedMatches] = useState([]);
+  const [excludedMatches, setExcludedMatches] = useState([]);
   const [style, setStyle] = useState();
   const [opener, setOpener] = useState();
+  const [api, setApi] = useState();
+  const [match, setMatch] = useState();
+  const [message, setMessage] = useState();
 
   useEffect(() => {
     const tokenCookie = localStorage.getItem("tinder_api_key");
@@ -16,6 +19,8 @@ export const HomeProvider = (props) => {
   });
 
   useEffect(() => {
+    setApi(new API());
+
     const storedStyle = localStorage.getItem("style");
     const storedOpener = localStorage.getItem("opener");
 
@@ -38,8 +43,10 @@ export const HomeProvider = (props) => {
     if (!matches) {
       const api = new API();
       const uncessaryAsync = async () => {
+        setLoading(true);
         const resp = await api.getMatches();
         setMatches(resp);
+        setLoading(false);
       };
       uncessaryAsync();
     }
@@ -49,46 +56,35 @@ export const HomeProvider = (props) => {
     if (typeof window !== "undefined" && typeof style !== "undefined") {
       localStorage.setItem("style", style);
     }
-    console.log(localStorage.getItem("style"));
   }, [style]);
 
   useEffect(() => {
-    console.log(selectedMatches);
-    if (
-      typeof window !== "undefined" &&
-      selectedMatches &&
-      typeof selectedMatches != "undefined" &&
-      selectedMatches.length &&
-      selectedMatches[0] !== "undefined"
-    ) {
-      console.log("setting selected matches", selectedMatches);
-      localStorage.setItem("selected_matches", selectedMatches);
+    if (typeof window !== "undefined" && matches) {
+      localStorage.setItem("excluded_matches", JSON.stringify(excludedMatches));
     }
-  }, [selectedMatches]);
+  }, [excludedMatches]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && matches) {
-      const localSelected = localStorage.getItem("selected_matches");
+      const localExcluded = JSON.parse(
+        localStorage.getItem("excluded_matches")
+      );
 
-      if (!localSelected) {
-        console.log("no local selected");
-        setSelectedMatches(matches.map((m) => m._id));
-      } else {
-        setSelectedMatches(localSelected.split(","));
+      if (localExcluded) {
+        setExcludedMatches(localExcluded);
       }
     }
   }, [matches]);
 
   useEffect(() => {
     let intervalId;
-    console.log("autoChatting changed");
 
-    if (autoChatting) {
-      console.log("autoChatting is true");
+    if (autoChatting && !loading) {
+      chat();
 
       intervalId = setInterval(() => {
         chat();
-      }, 50000);
+      }, 300000);
     } else {
       clearInterval(intervalId);
     }
@@ -97,19 +93,15 @@ export const HomeProvider = (props) => {
   }, [autoChatting]);
 
   const chat = async () => {
-    setLoading(true);
-    console.log("chat function called");
     try {
-      //start api
-      const api = new API();
-
+      console.log("running");
       //get info about the user
       const self = await api.getSelf();
       const user = self.user;
 
       //get matches
-      const matchesSelected = matches.filter((match) =>
-        selectedMatches.includes(match._id)
+      const matchesSelected = matches.filter(
+        (match) => !excludedMatches.includes(match._id)
       );
 
       for (let match of matchesSelected) {
@@ -187,7 +179,6 @@ export const HomeProvider = (props) => {
 
             .replace("$time", now.toLocaleTimeString()) + moreInfo?.join(" ");
 
-        console.log(filteredStyle);
         const systemPrompt = rawMessages.length
           ? `${filteredStyle} ${opener}`
           : filteredStyle;
@@ -220,16 +211,20 @@ export const HomeProvider = (props) => {
         };
 
         const message = await api.generateMessage(chatBody);
+        setMessage(message);
+        setMatch(match);
         console.log(message);
 
-        // console.log(await api.sendMessage(match._id, message));
+        console.log(await api.sendMessage(match._id, message));
       }
+      setLoading(false);
+      // setMatch(null);
     } catch (error) {
       console.log(error);
 
       setAutoChatting(false);
+      setMatch(null);
     }
-    setLoading(false);
   };
 
   return (
@@ -241,13 +236,14 @@ export const HomeProvider = (props) => {
         setAutoChatting,
         matches,
         setMatches,
-        selectedMatches,
-        setSelectedMatches,
+        excludedMatches,
+        setExcludedMatches,
         style,
         setStyle,
         opener,
         setOpener,
-        chat,
+        match,
+        message,
       }}
     >
       {props.children}
