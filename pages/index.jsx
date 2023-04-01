@@ -93,11 +93,11 @@ export default function Home() {
         }
       >
         <Alert message={error} type={"error"}></Alert>
-        <div className="p-5 bg-slate-800 text-left  w-100">
-          <h3 className={"text-2xl text-white"}>
+        <div className=" bg-slate-800 text-left">
+          <h3 className={"p-5 text-2xl text-white"}>
             Phone number associated with Tinder
           </h3>
-          <div className={"flex"}>
+          <div className={"grid md:flex p-5"}>
             <select
               className={"mt-2 p-3"}
               onChange={(e) => {
@@ -137,7 +137,7 @@ export default function Home() {
           </div>
 
           {showCodeInput && (
-            <div className={"mt-10 text-left"}>
+            <div className={"mt-10 p-5 text-left"}>
               <h3 className="text-white text-2xl">Confirmation code</h3>
               <div className="flex">
                 <input
