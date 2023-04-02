@@ -1,15 +1,16 @@
 export default function Match({
   selected,
   match,
-  excludedMatches,
-  setExcludedMatches,
+  selectedMatches,
+  setSelectedMatches,
 }) {
   return selected ? (
     <div
       className="flex flex-row py-2 border-b border-slate-400 align-middle cursor-pointer hover:bg-emerald-400 bg-emerald-100 text-black"
       onClick={() => {
-        setExcludedMatches(excludedMatches.concat(match._id));
+        setSelectedMatches(selectedMatches.filter((m) => m._id != match._id));
       }}
+      key={match._id}
     >
       <div className="h-20 w-20 rounded-full overflow-hidden  mr-4">
         <img
@@ -25,7 +26,7 @@ export default function Match({
   ) : (
     <div
       onClick={() => {
-        setExcludedMatches(excludedMatches.filter((m) => m != match._id));
+        setSelectedMatches(selectedMatches.concat(match));
       }}
       key={match._id}
       className="flex flex-row py-2 border-b border-slate-400 align-middle cursor-pointer hover:bg-slate-400 bg-slate-100 text-black"

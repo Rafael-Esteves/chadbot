@@ -9,17 +9,13 @@ export default function Home() {
     loading,
     autoChatting,
     setAutoChatting,
-    setLoading,
     matches,
-    setMatches,
-    excludedMatches,
-    setExcludedMatches,
+    selectedMatches,
+    setSelectedMatches,
     style,
     setStyle,
     opener,
     setOpener,
-    message,
-    match,
   } = useContext(HomeContext);
 
   const [showSettings, setShowSettings] = useState(false);
@@ -36,7 +32,7 @@ export default function Home() {
           <button
             className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
             onClick={() => {
-              setExcludedMatches([]);
+              setSelectedMatches(matches);
             }}
           >
             Select all
@@ -45,11 +41,11 @@ export default function Home() {
         <div className="overflow-auto no-scrollbar h-96 text-white ">
           {matches &&
             matches.map((match) => {
-              const selected = !excludedMatches.includes(match._id);
+              const selected = selectedMatches?.includes(match);
               return (
                 <Match
-                  setExcludedMatches={setExcludedMatches}
-                  excludedMatches={excludedMatches}
+                  setSelectedMatches={setSelectedMatches}
+                  selectedMatches={selectedMatches}
                   key={match._id}
                   match={match}
                   selected={selected}
@@ -140,10 +136,7 @@ export default function Home() {
                 d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
               />
             </svg>
-            Selected Matches:{" "}
-            {matches && excludedMatches
-              ? matches.length - excludedMatches.length
-              : "loading..."}
+            Selected Matches: {selectedMatches?.length ?? "loading..."}
           </button>
           <button
             className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
@@ -174,11 +167,11 @@ export default function Home() {
           </button>
         </div>
 
-        <h2 className="p-3 text-xl mt-5 text-white">
-          Toggle auto chad to automatically respond every 5 minutes. (Do not
-          close this tab)
+        <h2 className="p-3 text-xl my-5 text-white">
+          Toggle auto chad to automatically respond to ongoing conversations and
+          open new matches every 5 minutes. (Do not close this tab)
         </h2>
-        <div className="text-center my-5">
+        <div className="text-center mb-10">
           <label
             className="inline-block pr-[0.15rem] hover:cursor-pointer text-white text-xl text-bold uppercase"
             htmlFor="flexSwitchCheckDefault"
