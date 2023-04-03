@@ -12,7 +12,7 @@ export default function Base(props) {
       </Head>
       <main
         className={
-          "flex flex-col items-center justify-center h-screen bg-[url('/images/multi-chad.jpeg')]"
+          "flex flex-col items-center justify-center h-full bg-[url('/images/multi-chad.jpeg')]"
         }
       >
         <HomeProvider>{props.children}</HomeProvider>

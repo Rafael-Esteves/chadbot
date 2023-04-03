@@ -25,7 +25,11 @@ export default function MatchCard() {
       </div>
 
       <div className="text-xl my-5 text-white">{match.person.name}</div>
-      <div className="overflow-auto no-scrollbar text-white h-60 mb-5 flex flex-col-reverse">
+      <div
+        className={`${
+          messages?.length ? "flex" : "hidden"
+        } overflow-auto no-scrollbar text-white h-60 mb-5  flex-col-reverse`}
+      >
         {!loading &&
           messages?.map((msg) => {
             console.log(msg);
@@ -42,11 +46,11 @@ export default function MatchCard() {
         cols={50}
         disabled={loading || autoChatting}
       />
-      <div className="flex flex-row justify-between">
+      <div className="grid md:flex md:flex-row md:justify-between">
         <button
           className={` ${
             loading ? "opacity-50" : ""
-          }bg-slate-500 text-white active:bg-slate-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
+          }bg-slate-500 text-white active:bg-slate-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
           onClick={() => {
             generateMessage();
           }}
@@ -57,7 +61,7 @@ export default function MatchCard() {
         <button
           className={` ${
             loading ? "opacity-50" : ""
-          } bg-rose-400 text-white active:bg-rose-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
+          } bg-rose-400 text-white active:bg-rose-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
           onClick={() => {
             nextMatch();
           }}
@@ -68,7 +72,7 @@ export default function MatchCard() {
         <button
           className={` ${
             loading ? "opacity-50" : ""
-          } bg-emerald-400 text-white active:bg-emerald-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
+          } bg-emerald-400 text-white active:bg-emerald-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
           onClick={() => {
             sendMessage();
           }}
