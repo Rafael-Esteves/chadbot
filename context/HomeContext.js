@@ -44,13 +44,15 @@ export const HomeProvider = (props) => {
   }, [yourTurnMatches]);
 
   useEffect(() => {
-    if (yourTurnMatches) {
+    if (yourTurnMatches?.length) {
       const newMatch = yourTurnMatches[index];
       if (newMatch && newMatch != match) {
         setMatch(newMatch);
       } else {
         nextMatch();
       }
+    } else {
+      setMatch();
     }
   }, [index]);
 
@@ -150,7 +152,7 @@ export const HomeProvider = (props) => {
     if (autoChatting) {
       //sending the current message starts the whole waterfall of effects that keeps things going
 
-      if (index >= yourTurnMatches.length) {
+      if (index >= yourTurnMatches?.length) {
         intervalId = setInterval(() => {
           setIndex(0);
         }, 3000);
@@ -173,13 +175,13 @@ export const HomeProvider = (props) => {
   }, [autoChatting]);
 
   const nextMatch = () => {
-    if (index > yourTurnMatches.length) {
+    if (index > yourTurnMatches?.length) {
       if (!autoChatting) {
         setMessage("");
         setIndex(0);
       }
     } else {
-      if (yourTurnMatches.length > 1) {
+      if (yourTurnMatches?.length > 1) {
         setMessage("");
         setIndex(index + 1);
       }
