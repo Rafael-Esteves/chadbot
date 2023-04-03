@@ -42,7 +42,7 @@ export default function MatchCard() {
         onChange={(e) => {
           setMessage(e.target.value);
         }}
-        rows={3}
+        rows={5}
         cols={50}
         disabled={loading || autoChatting}
       />

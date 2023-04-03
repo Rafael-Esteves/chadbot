@@ -212,16 +212,8 @@ export const HomeProvider = (props) => {
       (interest) => interest.name
     );
 
-    const interestsString = () => {
-      let string = "";
-      if (interests) {
-        string = ``;
-        interests.forEach((int) => {
-          string = string + int + ", ";
-        });
-      }
-      return string;
-    };
+    const randIndex = Math.floor(Math.random() * interests.length);
+    console.log("rand", randIndex);
 
     const moreInfo = profile.selected_descriptors?.map((descriptor) => {
       return `${descriptor.name}: ${descriptor.choice_selections[0].name}.`;
@@ -231,26 +223,24 @@ export const HomeProvider = (props) => {
     const now = new Date();
 
     const replaceVariables = (text) => {
-      return (
-        text
-          .replace("$yourname", user.name)
-          .replace("$yourgender", user.gender == 1 ? "woman" : "man")
-          .replace("$distancemi", profile.distance_mi)
-          .replace("$distancekm", distance_km)
-          .replace("$matchname", name)
-          .replace("$matchinterests", interestsString())
-          .replace("$date", now.toLocaleDateString())
+      return text
+        .replaceAll("$yourname", user.name)
+        .replaceAll("$yourgender", user.gender == 1 ? "woman" : "man")
+        .replaceAll("$distancemi", profile.distance_mi)
+        .replaceAll("$distancekm", distance_km)
+        .replaceAll("$matchname", name)
+        .replaceAll("$matchinterests", interests.join(", "))
+        .replaceAll("$date", now.toLocaleDateString())
+        .replaceAll("$randominterest", interests[randIndex])
 
-          .replace("$time", now.toLocaleTimeString()) + moreInfo?.join(" ")
-      );
+        .replaceAll("$time", now.toLocaleTimeString());
     };
+
+    console.log("interest", interests[randIndex]);
+    console.log("moreInfo", moreInfo);
 
     const rawMessages = await api.getMessages(match._id);
     setMessages(rawMessages);
-
-    const systemPrompt = rawMessages.length
-      ? `${replaceVariables(style)} ${replaceVariables(opener)}`
-      : replaceVariables(style);
 
     const messageObjects = rawMessages
       .map((msg) => {
@@ -264,7 +254,9 @@ export const HomeProvider = (props) => {
     const messagesGPT = [
       {
         role: "system",
-        content: systemPrompt,
+        content: !rawMessages.length
+          ? replaceVariables(opener)
+          : replaceVariables(style),
       },
       ...messageObjects,
     ];
@@ -273,13 +265,16 @@ export const HomeProvider = (props) => {
       model: "gpt-3.5-turbo",
       messages: messagesGPT,
       temperature: 0.2,
-      max_tokens: 100,
-      stop: ["#"],
+      max_tokens: 200,
+      stop: ["#", "^s*$"],
       frequency_penalty: 1,
       logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100 },
     };
 
+    console.log(chatBody);
+
     const msg = await api.generateMessage(chatBody);
+
     setMessage(msg);
     console.log("Message generated for", name);
     console.log("Message", msg);
