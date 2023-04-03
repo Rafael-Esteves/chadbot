@@ -1,6 +1,8 @@
 import { HomeContext } from "@/context/HomeContext";
 import { useContext } from "react";
 import Bubble from "./Messages/Bubble";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export default function MatchCard() {
   const {
@@ -25,32 +27,39 @@ export default function MatchCard() {
       </div>
 
       <div className="text-xl my-5 text-white">{match.person.name}</div>
-      <div
-        className={`${
-          messages?.length ? "flex" : "hidden"
-        } overflow-auto no-scrollbar text-white h-60 mb-5  flex-col-reverse`}
-      >
-        {!loading &&
-          messages?.map((msg) => {
-            console.log(msg);
-            return <Bubble msg={msg} key={msg._id}></Bubble>;
-          })}
-      </div>
-      <textarea
-        className="text-xl mb-5 block p-2.5 w-full rounded-lg border border-gray-300 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500 bg-slate-700 text-white"
-        value={message}
-        onChange={() => {
-          setMessage(message);
-        }}
-        rows={3}
-        cols={50}
-        disabled={loading || autoChatting}
-      />
-      <div className="grid md:flex md:flex-row md:justify-between">
+
+      {message ? (
+        <>
+          <div
+            className={`${
+              messages?.length ? "flex" : "hidden"
+            } overflow-auto no-scrollbar text-white h-60 mb-5  flex-col-reverse`}
+          >
+            {!loading &&
+              messages?.map((msg) => {
+                console.log(msg);
+                return <Bubble msg={msg} key={msg._id}></Bubble>;
+              })}
+          </div>
+          <textarea
+            className="text-xl block p-2.5 w-full rounded-lg border border-gray-300 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500 bg-slate-700 text-white"
+            value={message}
+            onChange={() => {
+              setMessage(message);
+            }}
+            rows={3}
+            cols={50}
+            disabled={loading || autoChatting}
+          />
+        </>
+      ) : (
+        <Skeleton count={3} />
+      )}
+      <div className="grid md:flex md:flex-row md:justify-between mt-5">
         <button
           className={` ${
             loading ? "opacity-50" : ""
-          }bg-slate-500 text-white active:bg-slate-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
+          } bg-slate-500 text-white active:bg-slate-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
           onClick={() => {
             generateMessage();
           }}

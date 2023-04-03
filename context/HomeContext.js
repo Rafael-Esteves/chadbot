@@ -164,6 +164,7 @@ export const HomeProvider = (props) => {
 
   const nextMatch = () => {
     console.log("next match, index:", index);
+    setMessage("");
     if (index > selectedMatches.length) {
       if (!autoChatting) setIndex(0);
     } else {
@@ -172,7 +173,7 @@ export const HomeProvider = (props) => {
   };
 
   const sendMessage = async () => {
-    // await api.sendMessage(matches[index]._id, message);
+    await api.sendMessage(matches[index]._id, message);
     console.log("send message");
     nextMatch();
   };
@@ -260,8 +261,7 @@ export const HomeProvider = (props) => {
       logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100 },
     };
 
-    // const msg = await api.generateMessage(chatBody);
-    const msg = "await api.generateMessage(chatBody)";
+    const msg = await api.generateMessage(chatBody);
     setMessage(msg);
     return msg;
   };
