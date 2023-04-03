@@ -54,10 +54,10 @@ export const HomeProvider = (props) => {
   }, [match]);
 
   useEffect(() => {
-    if (matches) {
+    if (selectedMatches) {
       setIndex(0);
     }
-  }, [matches]);
+  }, [selectedMatches]);
 
   useEffect(() => {
     const api = new API();
@@ -137,27 +137,35 @@ export const HomeProvider = (props) => {
   useEffect(() => {
     let intervalId;
 
-    if (autoChatting && !loading) {
+    if (autoChatting) {
       //sending the current message starts the whole waterfall of effects that keeps things going
-      sendMessage();
-      intervalId = setInterval(() => {
-        if (!loading) {
-          //this if is here in case it wasn't able to finish a first run in the given amount of time
+      console.log("index:", index);
+      console.log("Selected matches length", selectedMatches.length);
+      if (index >= selectedMatches.length) {
+        console.log("inside truthy");
+        intervalId = setInterval(() => {
+          console.log("inside interval");
           setIndex(0);
-        }
-      }, 300000);
+        }, 300000);
+      }
     } else {
       clearInterval(intervalId);
     }
 
     return () => clearInterval(intervalId);
+  }, [index]);
+
+  useEffect(() => {
+    if (autoChatting) {
+      if (index == 0) sendMessage();
+      else setIndex(0);
+    }
   }, [autoChatting]);
 
   const nextMatch = () => {
+    console.log("next match, index:", index);
     if (index > selectedMatches.length) {
-      if (!autoChatting) {
-        setIndex(0);
-      }
+      if (!autoChatting) setIndex(0);
     } else {
       setIndex(index + 1);
     }
@@ -165,6 +173,7 @@ export const HomeProvider = (props) => {
 
   const sendMessage = async () => {
     // await api.sendMessage(matches[index]._id, message);
+    console.log("send message");
     nextMatch();
   };
 
@@ -251,7 +260,8 @@ export const HomeProvider = (props) => {
       logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100 },
     };
 
-    const msg = await api.generateMessage(chatBody);
+    // const msg = await api.generateMessage(chatBody);
+    const msg = "await api.generateMessage(chatBody)";
     setMessage(msg);
     return msg;
   };

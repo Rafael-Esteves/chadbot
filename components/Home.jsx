@@ -183,7 +183,6 @@ export default function Home() {
             type="checkbox"
             role="switch"
             checked={autoChatting}
-            disabled={loading}
             id="flexSwitchCheckDefault"
             onChange={() => {
               setAutoChatting(!autoChatting);
