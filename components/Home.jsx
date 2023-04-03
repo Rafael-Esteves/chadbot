@@ -121,8 +121,8 @@ export default function Home() {
           Settings
         </div>
       </Modal> */}
-        <div className="flex flex-col bg-slate-800 p-10  min-h-screen">
-          <div className="flex md:flex-row flex-col justify-between">
+        <div className="flex flex-col p-10  min-h-screen">
+          <div className=" flex md:flex-row flex-col justify-between">
             <button
               className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
               onClick={() => {
