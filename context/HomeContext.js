@@ -7,6 +7,7 @@ export const HomeProvider = (props) => {
   const [autoChatting, setAutoChatting] = useState(false);
   const [matches, setMatches] = useState();
   const [selectedMatches, setSelectedMatches] = useState();
+  const [yourTurnMatches, setYourTurnMatches] = useState();
   const [style, setStyle] = useState();
   const [opener, setOpener] = useState();
   const [api, setApi] = useState();
@@ -14,24 +15,38 @@ export const HomeProvider = (props) => {
   const [message, setMessage] = useState();
   const [messages, setMessages] = useState();
   const [self, setSelf] = useState();
-  const [index, setIndex] = useState(-1);
+  const [index, setIndex] = useState(0);
+  const [intervalIdState, setIntervalIdState] = useState();
 
   useEffect(() => {
     const tokenCookie = localStorage.getItem("tinder_api_key");
     if (!tokenCookie) Router.push("/");
+    console.log(yourTurnMatches, index);
+    if (yourTurnMatches && index == -1) setIndex(0);
   });
 
   useEffect(() => {
-    if (selectedMatches) {
-      const newMatch = selectedMatches[index];
-      if (
-        newMatch &&
-        newMatch != match &&
-        !(
-          newMatch.messages.length &&
-          newMatch.messages[0].from != newMatch.person._id
-        )
-      ) {
+    if (matches) {
+      const storedExcluded = localStorage.getItem("excluded_matches");
+
+      if (storedExcluded) {
+        setSelectedMatches(
+          matches.filter((m) => {
+            return !storedExcluded.includes(m._id);
+          })
+        );
+      }
+    }
+  }, [matches]);
+
+  useEffect(() => {
+    if (!yourTurnMatches) setMatch();
+  }, [yourTurnMatches]);
+
+  useEffect(() => {
+    if (yourTurnMatches) {
+      const newMatch = yourTurnMatches[index];
+      if (newMatch && newMatch != match) {
         setMatch(newMatch);
       } else {
         nextMatch();
@@ -42,22 +57,14 @@ export const HomeProvider = (props) => {
   useEffect(() => {
     if (match) {
       const matchEffect = async () => {
-        setLoading(true);
         await generateMessage();
         if (autoChatting) {
           await sendMessage();
         }
-        setLoading(false);
       };
       matchEffect();
     }
   }, [match]);
-
-  useEffect(() => {
-    if (selectedMatches) {
-      setIndex(0);
-    }
-  }, [selectedMatches]);
 
   useEffect(() => {
     const api = new API();
@@ -66,7 +73,6 @@ export const HomeProvider = (props) => {
 
     const storedStyle = localStorage.getItem("style");
     const storedOpener = localStorage.getItem("opener");
-    const storedExcluded = localStorage.getItem("excluded_matches");
 
     if (storedStyle) {
       setStyle(storedStyle);
@@ -77,7 +83,7 @@ export const HomeProvider = (props) => {
     }
 
     if (storedOpener) {
-      setStyle(storedOpener);
+      setOpener(storedOpener);
     } else {
       setOpener(
         `Make a custom opening line that includes the match name and a question related to their interests. This question must be the message's main focus. The message should not contain anything other than the question. `
@@ -89,15 +95,6 @@ export const HomeProvider = (props) => {
         setLoading(true);
         const resp = await api.getMatches();
         setMatches(resp);
-        if (storedExcluded) {
-          setSelectedMatches(
-            resp.filter((m) => {
-              return !storedExcluded.includes(m._id);
-            })
-          );
-        } else {
-          setSelectedMatches(resp);
-        }
 
         setLoading(false);
       };
@@ -115,6 +112,8 @@ export const HomeProvider = (props) => {
       };
       selfEffect();
     }
+    console.log("setting index to -1");
+    setIndex(-1);
   }, []);
 
   useEffect(() => {
@@ -124,11 +123,22 @@ export const HomeProvider = (props) => {
   }, [style]);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && typeof opener !== "undefined") {
+      localStorage.setItem("opener", opener);
+    }
+  }, [opener]);
+
+  useEffect(() => {
     if (selectedMatches) {
       localStorage.setItem(
         "excluded_matches",
         JSON.stringify(
           matches.filter((m) => !selectedMatches.includes(m)).map((m) => m._id)
+        )
+      );
+      setYourTurnMatches(
+        selectedMatches.filter(
+          (m) => !(m.messages.length && m.messages[0].from != m.person._id)
         )
       );
     }
@@ -139,14 +149,12 @@ export const HomeProvider = (props) => {
 
     if (autoChatting) {
       //sending the current message starts the whole waterfall of effects that keeps things going
-      console.log("index:", index);
-      console.log("Selected matches length", selectedMatches.length);
-      if (index >= selectedMatches.length) {
-        console.log("inside truthy");
+
+      if (index >= yourTurnMatches.length) {
         intervalId = setInterval(() => {
-          console.log("inside interval");
           setIndex(0);
-        }, 300000);
+        }, 3000);
+        setIntervalIdState(intervalId);
       }
     } else {
       clearInterval(intervalId);
@@ -159,26 +167,35 @@ export const HomeProvider = (props) => {
     if (autoChatting) {
       if (index == 0) sendMessage();
       else setIndex(0);
+    } else {
+      clearInterval(intervalIdState);
     }
   }, [autoChatting]);
 
   const nextMatch = () => {
-    console.log("next match, index:", index);
-    setMessage("");
-    if (index > selectedMatches.length) {
-      if (!autoChatting) setIndex(0);
+    if (index > yourTurnMatches.length) {
+      if (!autoChatting) {
+        setMessage("");
+        setIndex(0);
+      }
     } else {
-      setIndex(index + 1);
+      if (yourTurnMatches.length > 1) {
+        setMessage("");
+        setIndex(index + 1);
+      }
     }
   };
 
   const sendMessage = async () => {
-    await api.sendMessage(matches[index]._id, message);
-    console.log("send message");
+    setLoading(true);
+    await api.sendMessage(match._id, message);
+    setMatches(await api.getMatches());
     nextMatch();
+    setLoading(false);
   };
 
   const generateMessage = async () => {
+    setLoading(true);
     //get info about the user
     const user = self.user;
 
@@ -229,8 +246,6 @@ export const HomeProvider = (props) => {
     };
 
     const rawMessages = await api.getMessages(match._id);
-    console.log(rawMessages);
-
     setMessages(rawMessages);
 
     const systemPrompt = rawMessages.length
@@ -266,6 +281,9 @@ export const HomeProvider = (props) => {
 
     const msg = await api.generateMessage(chatBody);
     setMessage(msg);
+    console.log("Message generated for", name);
+    console.log("Message", msg);
+    setLoading(false);
     return msg;
   };
 
@@ -280,6 +298,8 @@ export const HomeProvider = (props) => {
         setMatches,
         selectedMatches,
         setSelectedMatches,
+        yourTurnMatches,
+        setYourTurnMatches,
         style,
         setStyle,
         opener,
