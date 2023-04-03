@@ -211,19 +211,22 @@ export const HomeProvider = (props) => {
     });
 
     const distance_km = parseInt(profile.distance_mi / 0.621371);
-
     const now = new Date();
-    const filteredStyle =
-      style
-        .replace("$yourname", user.name)
-        .replace("$yourgender", user.gender == 1 ? "woman" : "man")
-        .replace("$distancemi", profile.distance_mi)
-        .replace("$distancekm", distance_km)
-        .replace("$matchname", name)
-        .replace("$matchinterests", interestsString())
-        .replace("$date", now.toLocaleDateString())
 
-        .replace("$time", now.toLocaleTimeString()) + moreInfo?.join(" ");
+    const replaceVariables = (text) => {
+      return (
+        text
+          .replace("$yourname", user.name)
+          .replace("$yourgender", user.gender == 1 ? "woman" : "man")
+          .replace("$distancemi", profile.distance_mi)
+          .replace("$distancekm", distance_km)
+          .replace("$matchname", name)
+          .replace("$matchinterests", interestsString())
+          .replace("$date", now.toLocaleDateString())
+
+          .replace("$time", now.toLocaleTimeString()) + moreInfo?.join(" ")
+      );
+    };
 
     const rawMessages = await api.getMessages(match._id);
     console.log(rawMessages);
@@ -231,8 +234,8 @@ export const HomeProvider = (props) => {
     setMessages(rawMessages);
 
     const systemPrompt = rawMessages.length
-      ? `${filteredStyle} ${opener}`
-      : filteredStyle;
+      ? `${replaceVariables(style)} ${replaceVariables(opener)}`
+      : replaceVariables(style);
 
     const messageObjects = rawMessages
       .map((msg) => {
