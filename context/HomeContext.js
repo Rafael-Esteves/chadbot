@@ -258,7 +258,7 @@ export const HomeProvider = (props) => {
       model: "gpt-3.5-turbo",
       messages: messagesGPT,
       temperature: 0.2,
-      max_tokens: 40,
+      max_tokens: 100,
       stop: ["#"],
       frequency_penalty: 1,
       logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100 },
