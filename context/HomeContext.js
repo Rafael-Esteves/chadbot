@@ -155,7 +155,11 @@ export const HomeProvider = (props) => {
       if (index >= yourTurnMatches?.length) {
         intervalId = setInterval(() => {
           setIndex(0);
-        }, 3000);
+          const matchesEffect = async () => {
+            setMatches(await api.getMatches());
+          };
+          matchesEffect();
+        }, 300000);
         setIntervalIdState(intervalId);
       }
     } else {
@@ -175,16 +179,20 @@ export const HomeProvider = (props) => {
   }, [autoChatting]);
 
   const nextMatch = () => {
-    if (index > yourTurnMatches?.length) {
-      if (!autoChatting) {
-        setMessage("");
-        setIndex(0);
+    if (yourTurnMatches) {
+      if (index > yourTurnMatches?.length) {
+        if (!autoChatting) {
+          setMessage("");
+          setIndex(0);
+        }
+      } else {
+        if (yourTurnMatches?.length > 1) {
+          setMessage("");
+          setIndex(index + 1);
+        }
       }
     } else {
-      if (yourTurnMatches?.length > 1) {
-        setMessage("");
-        setIndex(index + 1);
-      }
+      setMatch();
     }
   };
 
@@ -253,6 +261,8 @@ export const HomeProvider = (props) => {
       })
       .reverse();
 
+    //it turns out my multi step approach was indeed the way to go. You start off easy with the question prompt, then you invite for the date, set up details and get or send number
+
     const messagesGPT = [
       {
         role: "system",
@@ -267,7 +277,7 @@ export const HomeProvider = (props) => {
       model: "gpt-3.5-turbo",
       messages: messagesGPT,
       temperature: 0.2,
-      max_tokens: 200,
+      max_tokens: 400,
       stop: ["#", "^s*$"],
       frequency_penalty: 1,
       logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100 },
