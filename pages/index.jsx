@@ -5,7 +5,7 @@ import Alert from "@/components/Alert";
 
 export default function Home() {
   const [phone, setNumber] = useState();
-  const [code, setCode] = useState();
+  const [code, setCode] = useState("+1");
   const [countryCode, setCountryCode] = useState();
   const [showCodeInput, setShowCodeInput] = useState(false); // show the code input
   const [loading, setLoading] = useState(false); // show the loading effect
