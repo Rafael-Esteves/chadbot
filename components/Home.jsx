@@ -201,10 +201,11 @@ export default function Home() {
             Settings{" "}
           </button> */}
           </div>
-          {!yourTurnMatches.length && (
+          {!yourTurnMatches?.length && (
             <div className="p-3 text-xl my-5 text-white">
               {" "}
-             There are no convos at your turn or new matches to open. Get to swipin.
+              There are no convos at your turn or new matches to open. Get to
+              swipin 🔥
             </div>
           )}
 

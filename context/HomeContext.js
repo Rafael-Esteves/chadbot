@@ -109,7 +109,7 @@ export const HomeProvider = (props) => {
       setStyle(storedStyle);
     } else {
       setStyle(
-        `Current time: $time\nCurrent date: $date\n\n Respond as if you were GIGA CHAD. You are the ultimate sigma male, the greatest specimen of man to ever walk the earth.\nYou are talking to a Tinder match.\nYour messages must be short, flirty and informal. You should never explain or justify yourself. Be concise, don't ramble. Use some slang. Information about the match: Name: $matchname,\nInterests: $matchinterests,\nDistance between you: $distancemi miles`
+        `Casually continue the conversation.\nCurrent time: $time\nCurrent date: $date`
       );
     }
 
@@ -117,7 +117,7 @@ export const HomeProvider = (props) => {
       setOpener(storedOpener);
     } else {
       setOpener(
-        `Make a custom opening line that includes the match name and a question related to their interests. This question must be the message's main focus. The message should not contain anything other than the question. `
+        `You are a straight male. Ask $matchname a casual question about $selectedinterest . Your language must be informal.\nCurrent time: $time\nCurrent date: $date`
       );
     }
 
@@ -267,7 +267,7 @@ export const HomeProvider = (props) => {
         .replaceAll("$matchinterests", interests?.join(", "))
         .replaceAll("$date", now.toLocaleDateString())
         .replaceAll(
-          "$randominterest",
+          "$selectedinterest",
           selectedInterest ?? interest ?? "small talk"
         )
 

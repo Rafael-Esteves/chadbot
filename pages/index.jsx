@@ -89,7 +89,7 @@ export default function Home() {
       </Head>
       <main
         className={
-          "flex flex-col items-center justify-center h-screen bg-[url('/images/multi-chad.jpeg')]"
+          "flex flex-col items-center md:justify-center justify-start h-screen bg-[url('/images/mobile-background.png')] bg-cover bg-bottom md:bg-center"
         }
       >
         <Alert message={error} type={"error"}></Alert>
