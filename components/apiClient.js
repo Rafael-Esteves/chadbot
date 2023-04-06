@@ -7,7 +7,6 @@ export class API {
     else window.location.href = "/";
   }
   tinderReq = async (path, body = {}) => {
-
     const response = await axios
       .post(path, {
         token: this.token,
@@ -45,8 +44,11 @@ export class API {
     return response.data;
   };
 
-  getMatches = async () => {
-    return await this.tinderReq("/api/get-matches");
+  getMatches = async (next_page_token = null) => {
+    const resp = await this.tinderReq("/api/get-matches", {
+      next_page_token: next_page_token,
+    });
+    return resp;
   };
 
   getProfile = async (person_id) => {

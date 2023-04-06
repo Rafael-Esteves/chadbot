@@ -1,25 +1,24 @@
 export class TinderApi {
-  constructor(token, accepted_languages = "en-US") {
+  constructor(token = null, accepted_languages = "en-US") {
     this.base_url = "https://api.gotinder.com/";
     this.locale = accepted_languages.split(",")[0].split("-")[0];
-    this.authHeaders = {
-      "X-Auth-Token": token,
+    this.token = token;
+    this.headers = {
       "content-type": "application/json",
       "User-agent": "Tinder/7.5.3 (iPhone; iOS 10.3.2; Scale/2.00)",
       "accept-language": `${accepted_languages}`,
     };
   }
-  static preAuthHeaders = {
-    "content-type": "application/json",
-    "User-agent": "Tinder/7.5.3 (iPhone; iOS 10.3.2; Scale/2.00)",
-  };
 
-  static preAuthReq = async (path, body = {}) => {
-    const response = await fetch(`https://api.gotinder.com/${path}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: TinderApi.preAuthHeaders,
-    });
+  preAuthReq = async (path, body = {}) => {
+    const response = await fetch(
+      `${this.base_url}${path}?locale=${this.locale}`,
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: this.headers,
+      }
+    );
     if (response.status >= 200 && response.status < 300) {
       return await response.json();
     } else {
@@ -30,7 +29,7 @@ export class TinderApi {
   fetchData = async (path) => {
     const response = await fetch(`${this.base_url}${path}`, {
       method: "GET",
-      headers: this.authHeaders,
+      headers: { "X-Auth-Token": this.token, ...this.headers },
     });
     if (response.status >= 200 && response.status < 300) {
       return await response.json();
@@ -43,7 +42,7 @@ export class TinderApi {
     const response = await fetch(`${this.base_url}${path}`, {
       method: "POST",
       body: JSON.stringify(body),
-      headers: this.authHeaders,
+      headers: { "X-Auth-Token": this.token, ...this.headers },
     });
     if (response.status >= 200 && response.status < 300) {
       return await response.json();
@@ -52,13 +51,13 @@ export class TinderApi {
     }
   };
 
-  static sendCode = async (number) => {
+  sendCode = async (number) => {
     return await this.preAuthReq(`v2/auth/sms/send?auth_type=sms`, {
       phone_number: number,
     });
   };
 
-  static getApiToken = async (code, number) => {
+  getApiToken = async (code, number) => {
     const refresh = await this.preAuthReq(
       `v2/auth/sms/validate?auth_type=sms`,
       {
@@ -66,17 +65,19 @@ export class TinderApi {
         phone_number: number,
       }
     );
-    console.log("refresh", refresh);
     return await this.preAuthReq(`v2/auth/login/sms`, {
       refresh_token: refresh.data.refresh_token,
     });
   };
 
-  getMatches = async () => {
+  getMatches = async (next_page_token = null) => {
     const res = await this.fetchData(
-      `v2/matches?count=100&is_tinder_u=false&locale=${this.locale}`
+      `v2/matches?count=100&is_tinder_u=false&locale=${this.locale}${
+        next_page_token ? "&page_token=" + next_page_token : ""
+      }`
     );
-    return res.data.matches;
+    console.log(res.data);
+    return res.data;
   };
 
   getSelf = async () => {

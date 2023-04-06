@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useRef } from "react";
 import Router from "next/router";
 import { API } from "@/components/apiClient";
 
@@ -17,11 +17,12 @@ export const HomeProvider = (props) => {
   const [self, setSelf] = useState();
   const [index, setIndex] = useState(0);
   const [intervalIdState, setIntervalIdState] = useState();
+  const [interests, setInterests] = useState([]);
+  const [selectedInterest, setSelectedInterest] = useState();
+  const [profile, setProfile] = useState();
+  const prevInterest = useRef();
 
   useEffect(() => {
-    const tokenCookie = localStorage.getItem("tinder_api_key");
-    if (!tokenCookie) Router.push("/");
-    console.log(yourTurnMatches, index);
     if (yourTurnMatches && index == -1) setIndex(0);
   });
 
@@ -44,31 +45,59 @@ export const HomeProvider = (props) => {
   }, [yourTurnMatches]);
 
   useEffect(() => {
-    if (yourTurnMatches?.length) {
-      const newMatch = yourTurnMatches[index];
-      if (newMatch && newMatch != match) {
-        setMatch(newMatch);
+    setSelectedInterest();
+    let intervalId;
+
+    if (yourTurnMatches) {
+      if (index <= yourTurnMatches.length) {
+        const newMatch = yourTurnMatches[index];
+        if (newMatch) {
+          if (newMatch == match) return;
+          setMatch(newMatch);
+        } else {
+          nextMatch();
+        }
       } else {
-        nextMatch();
+        if (!autoChatting) {
+          restart();
+        } else {
+          intervalId = setInterval(() => {
+            restart();
+          }, 300000);
+          setIntervalIdState(intervalId);
+        }
       }
     } else {
       setMatch();
     }
+    return () => clearInterval(intervalId);
   }, [index]);
+
+  const restart = async () => {
+    console.log("restart");
+    setMessage("");
+    await fetchMatches();
+    setIndex(0);
+  };
 
   useEffect(() => {
     if (match) {
       const matchEffect = async () => {
         await generateMessage();
-        if (autoChatting) {
-          await sendMessage();
-        }
       };
       matchEffect();
     }
   }, [match]);
 
   useEffect(() => {
+    if (autoChatting && message) {
+      sendMessage();
+    }
+  }, [message]);
+
+  useEffect(() => {
+    const tokenCookie = localStorage.getItem("tinder_api_key");
+    if (!tokenCookie) Router.push("/");
     const api = new API();
 
     setApi(api);
@@ -93,16 +122,7 @@ export const HomeProvider = (props) => {
     }
 
     if (!matches) {
-      const matchesEffect = async () => {
-        setLoading(true);
-        const resp = await api.getMatches();
-        setMatches(resp);
-
-        setLoading(false);
-      };
-      matchesEffect();
-    } else {
-      nextMatch();
+      fetchMatches();
     }
 
     if (!self) {
@@ -114,9 +134,35 @@ export const HomeProvider = (props) => {
       };
       selfEffect();
     }
-    console.log("setting index to -1");
     setIndex(-1);
+    console.log("should only be called once");
   }, []);
+
+  const fetchMatches = async () => {
+    let last_token = "randomstring";
+    setLoading(true);
+    const api = new API();
+    let resp = await api.getMatches(null);
+    setMatches(resp.matches);
+    setLoading(false);
+    console.log("first restp", resp);
+
+    if (resp.next_page_token) {
+      while (
+        resp.next_page_token &&
+        resp.next_page_token != last_token &&
+        resp.matches &&
+        resp.matches.length > 0
+      ) {
+        last_token = resp.next_page_token;
+        resp = await api.getMatches(resp.next_page_token);
+        setMatches((prev) => {
+          return [...prev, ...resp.matches];
+        });
+        console.log(resp);
+      }
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined" && typeof style !== "undefined") {
@@ -147,64 +193,40 @@ export const HomeProvider = (props) => {
   }, [selectedMatches]);
 
   useEffect(() => {
-    let intervalId;
-
-    if (autoChatting) {
-      //sending the current message starts the whole waterfall of effects that keeps things going
-
-      if (index >= yourTurnMatches?.length) {
-        intervalId = setInterval(() => {
-          setIndex(0);
-          const matchesEffect = async () => {
-            setMatches(await api.getMatches());
-          };
-          matchesEffect();
-        }, 300000);
-        setIntervalIdState(intervalId);
-      }
-    } else {
-      clearInterval(intervalId);
-    }
-
-    return () => clearInterval(intervalId);
-  }, [index]);
-
-  useEffect(() => {
-    if (autoChatting) {
+    if (autoChatting && yourTurnMatches) {
       if (index == 0) sendMessage();
-      else setIndex(0);
+      else restart();
     } else {
       clearInterval(intervalIdState);
     }
   }, [autoChatting]);
 
   const nextMatch = () => {
-    if (yourTurnMatches) {
-      if (index > yourTurnMatches?.length) {
-        if (!autoChatting) {
-          setMessage("");
-          setIndex(0);
-        }
-      } else {
-        if (yourTurnMatches?.length > 1) {
-          setMessage("");
-          setIndex(index + 1);
-        }
-      }
+    setLoading(true);
+    if (yourTurnMatches?.length > 1) {
+      setMessage("");
+      setIndex(index + 1);
     } else {
-      setMatch();
+      setLoading(false);
     }
   };
 
   const sendMessage = async () => {
     setLoading(true);
     await api.sendMessage(match._id, message);
-    setMatches(await api.getMatches());
     nextMatch();
-    setLoading(false);
   };
 
+  useEffect(() => {
+    prevInterest.current = selectedInterest;
+    if (selectedInterest && selectedInterest != prevInterest) {
+      setLoading(true);
+      generateMessage();
+    }
+  }, [selectedInterest]);
+
   const generateMessage = async () => {
+    if (!self || !match) return;
     setLoading(true);
     //get info about the user
     const user = self.user;
@@ -217,13 +239,16 @@ export const HomeProvider = (props) => {
     //if you got here, it means it will generate a message to send
 
     const profile = await api.getProfile(match.person._id);
+    setProfile(profile);
 
-    const interests = profile.user_interests?.selected_interests.map(
+    const interests = profile?.user_interests?.selected_interests.map(
       (interest) => interest.name
     );
+    setInterests(interests);
 
-    const randIndex = Math.floor(Math.random() * interests.length);
-    console.log("rand", randIndex);
+    const randIndex = Math.floor(Math.random() * interests?.length || 0);
+    const interest = interests ? interests[randIndex] : null;
+    if (!selectedInterest && interests) setSelectedInterest(interest);
 
     const moreInfo = profile.selected_descriptors?.map((descriptor) => {
       return `${descriptor.name}: ${descriptor.choice_selections[0].name}.`;
@@ -239,15 +264,15 @@ export const HomeProvider = (props) => {
         .replaceAll("$distancemi", profile.distance_mi)
         .replaceAll("$distancekm", distance_km)
         .replaceAll("$matchname", name)
-        .replaceAll("$matchinterests", interests.join(", "))
+        .replaceAll("$matchinterests", interests?.join(", "))
         .replaceAll("$date", now.toLocaleDateString())
-        .replaceAll("$randominterest", interests[randIndex])
+        .replaceAll(
+          "$randominterest",
+          selectedInterest ?? interest ?? "small talk"
+        )
 
         .replaceAll("$time", now.toLocaleTimeString());
     };
-
-    console.log("interest", interests[randIndex]);
-    console.log("moreInfo", moreInfo);
 
     const rawMessages = await api.getMessages(match._id);
     setMessages(rawMessages);
@@ -283,8 +308,6 @@ export const HomeProvider = (props) => {
       logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100 },
     };
 
-    console.log(chatBody);
-
     const msg = await api.generateMessage(chatBody);
 
     setMessage(msg);
@@ -319,6 +342,9 @@ export const HomeProvider = (props) => {
         generateMessage,
         nextMatch,
         messages,
+        interests,
+        selectedInterest,
+        setSelectedInterest,
       }}
     >
       {props.children}

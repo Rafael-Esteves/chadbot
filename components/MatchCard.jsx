@@ -13,6 +13,9 @@ export default function MatchCard() {
     loading,
     messages,
     autoChatting,
+    interests,
+    selectedInterest,
+    setSelectedInterest,
   } = useContext(HomeContext);
   return match ? (
     <div className="flex flex-col text-center justify-items-center justify-center">
@@ -26,13 +29,42 @@ export default function MatchCard() {
 
       <div className="text-xl my-5 text-white">{match.person.name}</div>
       <div
-        className={`flex overflow-auto no-scrollbar text-white h-60 mb-5  flex-col-reverse`}
+        className={`flex overflow-auto no-scrollbar text-white h-40 mb-5  flex-col-reverse`}
       >
         {!loading &&
           messages?.map((msg) => {
             return <Bubble msg={msg} key={msg._id}></Bubble>;
           })}
-        {!loading && !messages?.length && <div>Open new match</div>}
+        {!loading && !messages?.length && (
+          <div className="flex flex-row justify-center items-center align-middle h-full">
+            {interests?.map((i) => {
+              if (i == selectedInterest)
+                return (
+                  <div
+                    onClick={(e) => {
+                      if (!autoChatting)
+                        setSelectedInterest(e.target.innerHTML);
+                    }}
+                    className="px-5 py-2 mx-3 border border-emerald-300 rounded-3xl cursor-pointer"
+                  >
+                    {i}
+                  </div>
+                );
+              else
+                return (
+                  <div
+                    onClick={(e) => {
+                      if (!autoChatting)
+                        setSelectedInterest(e.target.innerHTML);
+                    }}
+                    className="px-5 py-2 mx-3 border border-slate-300 rounded-3xl cursor-pointer"
+                  >
+                    {i}
+                  </div>
+                );
+            })}
+          </div>
+        )}
       </div>
       <textarea
         className={`${

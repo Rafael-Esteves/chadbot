@@ -201,12 +201,19 @@ export default function Home() {
             Settings{" "}
           </button> */}
           </div>
+          {!yourTurnMatches.length && (
+            <div className="p-3 text-xl my-5 text-white">
+              {" "}
+             There are no convos at your turn or new matches to open. Get to swipin.
+            </div>
+          )}
 
+          {/* 
           <h2 className="p-3 text-xl my-5 text-white">
             Toggle auto chad to automatically respond to ongoing conversations
             and open new matches every 5 minutes. (Do not close this tab)
-          </h2>
-          <div className="text-center mb-10">
+          </h2> */}
+          {/* <div className="text-center mb-10">
             <label
               className="inline-block pr-[0.15rem] hover:cursor-pointer text-white text-xl text-bold uppercase"
               htmlFor="flexSwitchCheckDefault"
@@ -224,7 +231,7 @@ export default function Home() {
                 setAutoChatting(!autoChatting);
               }}
             />
-          </div>
+          </div> */}
           <MatchCard />
         </div>
       </SkeletonTheme>

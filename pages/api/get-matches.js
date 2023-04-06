@@ -8,7 +8,7 @@ export default async function handler(req, res) {
       req.body.token,
       req.headers["accept-language"]
     );
-    const response = await tinder.getMatches();
+    const response = await tinder.getMatches(req.body.next_page_token);
     res.status(200).json(response);
   } catch (err) {
     res.status(err).send(err);
