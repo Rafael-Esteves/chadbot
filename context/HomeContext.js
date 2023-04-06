@@ -45,15 +45,32 @@ export const HomeProvider = (props) => {
   }, [yourTurnMatches]);
 
   useEffect(() => {
-    setSelectedInterest();
+    setMessage("");
+
     let intervalId;
 
     if (yourTurnMatches) {
       if (index <= yourTurnMatches.length) {
         const newMatch = yourTurnMatches[index];
         if (newMatch) {
-          if (newMatch == match) return;
-          setMatch(newMatch);
+          const newMatchEffect = async () => {
+            const profile = await api.getProfile(newMatch.person._id);
+            setProfile(profile);
+
+            const interests = profile?.user_interests?.selected_interests.map(
+              (interest) => interest.name
+            );
+            setInterests(interests);
+
+            const randIndex = Math.floor(
+              Math.random() * interests?.length || 0
+            );
+            const interest = interests ? interests[randIndex] : null;
+            //gotta make sure the selected interest changes everytime the match changes to ensure message generation
+            setSelectedInterest(interest);
+            setMatch(newMatch);
+          };
+          newMatchEffect();
         } else {
           nextMatch();
         }
@@ -63,6 +80,7 @@ export const HomeProvider = (props) => {
         } else {
           intervalId = setInterval(() => {
             restart();
+            console.log("interval triggered");
           }, 300000);
           setIntervalIdState(intervalId);
         }
@@ -74,26 +92,10 @@ export const HomeProvider = (props) => {
   }, [index]);
 
   const restart = async () => {
-    console.log("restart");
     setMessage("");
     await fetchMatches();
-    setIndex(0);
+    setIndex(-1);
   };
-
-  useEffect(() => {
-    if (match) {
-      const matchEffect = async () => {
-        await generateMessage();
-      };
-      matchEffect();
-    }
-  }, [match]);
-
-  useEffect(() => {
-    if (autoChatting && message) {
-      sendMessage();
-    }
-  }, [message]);
 
   useEffect(() => {
     const tokenCookie = localStorage.getItem("tinder_api_key");
@@ -109,7 +111,7 @@ export const HomeProvider = (props) => {
       setStyle(storedStyle);
     } else {
       setStyle(
-        `Casually continue the conversation.\nCurrent time: $time\nCurrent date: $date`
+        `You are a straight man. Casually continue the conversation.\nCurrent time: $time\nCurrent date: $date`
       );
     }
 
@@ -117,7 +119,7 @@ export const HomeProvider = (props) => {
       setOpener(storedOpener);
     } else {
       setOpener(
-        `You are a straight male. Ask $matchname a casual question about $selectedinterest . Your language must be informal.\nCurrent time: $time\nCurrent date: $date`
+        `You are a straight man. Ask $matchname a casual question about $selectedinterest . Your language must be informal.\nCurrent time: $time\nCurrent date: $date`
       );
     }
 
@@ -135,7 +137,6 @@ export const HomeProvider = (props) => {
       selfEffect();
     }
     setIndex(-1);
-    console.log("should only be called once");
   }, []);
 
   const fetchMatches = async () => {
@@ -145,7 +146,6 @@ export const HomeProvider = (props) => {
     let resp = await api.getMatches(null);
     setMatches(resp.matches);
     setLoading(false);
-    console.log("first restp", resp);
 
     if (resp.next_page_token) {
       while (
@@ -159,7 +159,6 @@ export const HomeProvider = (props) => {
         setMatches((prev) => {
           return [...prev, ...resp.matches];
         });
-        console.log(resp);
       }
     }
   };
@@ -194,35 +193,39 @@ export const HomeProvider = (props) => {
 
   useEffect(() => {
     if (autoChatting && yourTurnMatches) {
-      if (index == 0) sendMessage();
-      else restart();
+      if (index == 0 && match) sendMessage(match, message);
+      else setIndex(-1);
     } else {
       clearInterval(intervalIdState);
     }
   }, [autoChatting]);
 
   const nextMatch = () => {
-    setLoading(true);
-    if (yourTurnMatches?.length > 1) {
-      setMessage("");
-      setIndex(index + 1);
-    } else {
-      setLoading(false);
-    }
+    console.log("next match");
+    console.log(yourTurnMatches);
+    setMessage("");
+    setIndex(index + 1);
   };
 
-  const sendMessage = async () => {
+  const sendMessage = async (match, message) => {
     setLoading(true);
-    await api.sendMessage(match._id, message);
+    const result = await api.sendMessage(match._id, message);
+    //remove match from yourturn
+    if (result.sent_date) {
+      setYourTurnMatches((prev) => prev.filter((m) => m._id != match?._id));
+      console.log("Message:", message);
+      console.log("Sent to:", match.person.name);
+    } else {
+      console.log("Message not sent.");
+    }
     nextMatch();
+    setLoading(false);
   };
 
   useEffect(() => {
     prevInterest.current = selectedInterest;
-    if (selectedInterest && selectedInterest != prevInterest) {
-      setLoading(true);
-      generateMessage();
-    }
+
+    if (match) generateMessage();
   }, [selectedInterest]);
 
   const generateMessage = async () => {
@@ -237,18 +240,6 @@ export const HomeProvider = (props) => {
     //I'll probably use chat gpt for this
 
     //if you got here, it means it will generate a message to send
-
-    const profile = await api.getProfile(match.person._id);
-    setProfile(profile);
-
-    const interests = profile?.user_interests?.selected_interests.map(
-      (interest) => interest.name
-    );
-    setInterests(interests);
-
-    const randIndex = Math.floor(Math.random() * interests?.length || 0);
-    const interest = interests ? interests[randIndex] : null;
-    if (!selectedInterest && interests) setSelectedInterest(interest);
 
     const moreInfo = profile.selected_descriptors?.map((descriptor) => {
       return `${descriptor.name}: ${descriptor.choice_selections[0].name}.`;
@@ -266,10 +257,7 @@ export const HomeProvider = (props) => {
         .replaceAll("$matchname", name)
         .replaceAll("$matchinterests", interests?.join(", "))
         .replaceAll("$date", now.toLocaleDateString())
-        .replaceAll(
-          "$selectedinterest",
-          selectedInterest ?? interest ?? "small talk"
-        )
+        .replaceAll("$selectedinterest", selectedInterest ?? "small talk")
 
         .replaceAll("$time", now.toLocaleTimeString());
     };
@@ -311,8 +299,8 @@ export const HomeProvider = (props) => {
     const msg = await api.generateMessage(chatBody);
 
     setMessage(msg);
-    console.log("Message generated for", name);
-    console.log("Message", msg);
+
+    if (autoChatting) sendMessage(match, msg);
     setLoading(false);
     return msg;
   };

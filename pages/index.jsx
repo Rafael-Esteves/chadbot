@@ -4,9 +4,9 @@ import Router from "next/router";
 import Alert from "@/components/Alert";
 
 export default function Home() {
-  const [phone, setNumber] = useState();
-  const [code, setCode] = useState("+1");
-  const [countryCode, setCountryCode] = useState();
+  const [phone, setNumber] = useState("");
+  const [code, setCode] = useState();
+  const [countryCode, setCountryCode] = useState("+1");
   const [showCodeInput, setShowCodeInput] = useState(false); // show the code input
   const [loading, setLoading] = useState(false); // show the loading effect
 
@@ -77,6 +77,7 @@ export default function Home() {
 
   useEffect(() => {
     if (localStorage.getItem("tinder_api_key")) Router.push("/main");
+    console.log(countryCode);
   }, []);
 
   return (

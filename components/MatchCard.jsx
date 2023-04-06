@@ -14,10 +14,11 @@ export default function MatchCard() {
     messages,
     autoChatting,
     interests,
-    selectedInterest,
-    setSelectedInterest,
+      selectedInterest,
+      setSelectedInterest,
+    yourTurnMatches,
   } = useContext(HomeContext);
-  return match ? (
+  return match && yourTurnMatches?.length ? (
     <div className="flex flex-col text-center justify-items-center justify-center">
       <div className="grid justify-center">
         <img
@@ -41,6 +42,7 @@ export default function MatchCard() {
               if (i == selectedInterest)
                 return (
                   <div
+                    id={i}
                     onClick={(e) => {
                       if (!autoChatting)
                         setSelectedInterest(e.target.innerHTML);
@@ -53,6 +55,7 @@ export default function MatchCard() {
               else
                 return (
                   <div
+                    id={i}
                     onClick={(e) => {
                       if (!autoChatting)
                         setSelectedInterest(e.target.innerHTML);
@@ -106,7 +109,7 @@ export default function MatchCard() {
             loading || autoChatting ? "opacity-50" : ""
           } bg-emerald-400 text-white active:bg-emerald-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
           onClick={() => {
-            sendMessage();
+            sendMessage(match, message);
           }}
           disabled={loading || autoChatting}
         >
