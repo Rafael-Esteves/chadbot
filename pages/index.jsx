@@ -2,6 +2,7 @@ import Head from "next/head";
 import { useState, useEffect } from "react";
 import Router from "next/router";
 import Alert from "@/components/Alert";
+import { API } from "@/components/apiClient";
 
 export default function Home() {
   const [phone, setNumber] = useState("");
@@ -10,74 +11,52 @@ export default function Home() {
   const [showCodeInput, setShowCodeInput] = useState(false); // show the code input
   const [loading, setLoading] = useState(false); // show the loading effect
 
+  const [api, setApi] = useState();
   const [error, setError] = useState();
 
-  const sendSms = async () => {
-    setLoading(true);
-
-    const resp = await fetch("/api/send-sms", {
-      method: "POST",
-      body: JSON.stringify({
-        phone: countryCode + phone,
-      }),
-      headers: {
-        "Content-type": "application/json",
-      },
-    });
-    setLoading(false);
-
-    const response = await resp.json();
-
-    if (response.error) {
-      setError(response.error.message ?? "There was an error.");
+  useEffect(() => {
+    if (error) {
       setTimeout(() => {
         setError(null);
       }, 4000);
-    } else {
-      setError(null);
-      setShowCodeInput(true);
     }
+  }, [error]);
+
+  const sendSms = async () => {
+    setLoading(true);
+    try {
+      await api.sendSms(countryCode + phone);
+      setShowCodeInput(true);
+    } catch (err) {
+      setError(err.message ?? "There was an error.");
+    }
+    setLoading(false);
   };
 
   const getToken = async () => {
     setLoading(true);
-    const resp = await fetch("/api/get-token", {
-      method: "POST",
-      body: JSON.stringify({
-        phone: countryCode + phone,
-        code: code,
-      }),
-      headers: {
-        "Content-type": "application/json",
-      },
-    });
-    setLoading(false);
+    try {
+      const auth = await api.getToken(code, countryCode + phone);
 
-    const response = await resp.json();
+      const customer = await api.getCustomer(countryCode + phone);
 
-    if (response.error) {
-      setError(response.error.message ?? "There was an error.");
-      setTimeout(() => {
-        setError(null);
-      }, 4000);
-    } else {
-      setError(null);
-      setShowCodeInput(true);
-      if (response.data) {
-        localStorage.setItem("tinder_api_key", response.data.api_token);
-        Router.push("/main");
-      } else {
-        setError("Token not found in the response.");
-        setTimeout(() => {
-          setError(null);
-        }, 4000);
-      }
+      localStorage.setItem("tinder_api_key", auth.api_token);
+      localStorage.setItem("customer_id", customer.id);
+
+      Router.push("/main");
+    } catch (err) {
+      setError(err.message ?? "There was an error.");
     }
+    setLoading(false);
   };
 
   useEffect(() => {
-    if (localStorage.getItem("tinder_api_key")) Router.push("/main");
-    console.log(countryCode);
+    if (
+      localStorage.getItem("tinder_api_key") &&
+      localStorage.getItem("customer_id")
+    )
+      Router.push("/main");
+    setApi(new API());
   }, []);
 
   return (
@@ -108,13 +87,15 @@ export default function Home() {
               <option value="+1">🇺🇸 +1</option>
               <option value="+55">🇧🇷 +55</option>
               <option value="+44">🇬🇧 +44</option>
+              <option value="+47">🇳🇴 +47</option>
+              <option value="+46">🇸🇪 +46</option>
+              <option value="+61">🇦🇺 +61</option>
               <option value="+33">🇫🇷 +33</option>
               <option value="+49">🇩🇪 +49</option>
               <option value="+81">🇯🇵 +81</option>
               <option value="+86">🇨🇳 +86</option>
               <option value="+91">🇮🇳 +91</option>
               <option value="+27">🇿🇦 +27</option>
-              <option value="+61">🇦🇺 +61</option>
             </select>
             <input
               className={"mt-2 bg-gray-200 p-3"}

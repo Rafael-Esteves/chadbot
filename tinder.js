@@ -76,7 +76,6 @@ export class TinderApi {
         next_page_token ? "&page_token=" + next_page_token : ""
       }`
     );
-    console.log(res.data);
     return res.data;
   };
 

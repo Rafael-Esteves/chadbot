@@ -21,6 +21,7 @@ export const HomeProvider = (props) => {
   const [selectedInterest, setSelectedInterest] = useState();
   const [profile, setProfile] = useState();
   const prevInterest = useRef();
+  const [showNotSubModal, setShowNotSubModal] = useState(false);
 
   useEffect(() => {
     if (yourTurnMatches && index == -1) setIndex(0);
@@ -75,9 +76,7 @@ export const HomeProvider = (props) => {
           nextMatch();
         }
       } else {
-        if (!autoChatting) {
-          restart();
-        } else {
+        if (autoChatting) {
           intervalId = setInterval(() => {
             restart();
             console.log("interval triggered");
@@ -98,8 +97,6 @@ export const HomeProvider = (props) => {
   };
 
   useEffect(() => {
-    const tokenCookie = localStorage.getItem("tinder_api_key");
-    if (!tokenCookie) Router.push("/");
     const api = new API();
 
     setApi(api);
@@ -230,6 +227,16 @@ export const HomeProvider = (props) => {
 
   const generateMessage = async () => {
     if (!self || !match) return;
+
+    const subscription = await api.getSubscription();
+
+    if (!["trialing", "active"].includes(subscription.status)) {
+      setShowNotSubModal(true);
+      return;
+    }
+
+    console.log(subscription);
+
     setLoading(true);
     //get info about the user
     const user = self.user;
@@ -241,9 +248,9 @@ export const HomeProvider = (props) => {
 
     //if you got here, it means it will generate a message to send
 
-    const moreInfo = profile.selected_descriptors?.map((descriptor) => {
-      return `${descriptor.name}: ${descriptor.choice_selections[0].name}.`;
-    });
+    // const moreInfo = profile.selected_descriptors?.map((descriptor) => {
+    //   return `${descriptor.name}: ${descriptor.choice_selections[0].name}.`;
+    // });
 
     const distance_km = parseInt(profile.distance_mi / 0.621371);
     const now = new Date();
@@ -289,10 +296,10 @@ export const HomeProvider = (props) => {
     const chatBody = {
       model: "gpt-3.5-turbo",
       messages: messagesGPT,
-      temperature: 0.2,
+      temperature: 0.5,
       max_tokens: 400,
       stop: ["#", "^s*$"],
-      frequency_penalty: 1,
+      frequency_penalty: 0.5,
       logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100 },
     };
 
@@ -333,6 +340,8 @@ export const HomeProvider = (props) => {
         interests,
         selectedInterest,
         setSelectedInterest,
+        restart,
+        showNotSubModal
       }}
     >
       {props.children}

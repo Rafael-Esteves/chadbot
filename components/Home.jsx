@@ -3,6 +3,7 @@ import { HomeContext } from "@/context/HomeContext";
 import Modal from "./Modal";
 import Match from "./Match";
 import MatchCard from "./MatchCard";
+import NotSubModal from "./NotSubModal";
 
 export default function Home() {
   const {
@@ -16,6 +17,8 @@ export default function Home() {
     opener,
     setOpener,
     yourTurnMatches,
+    restart,
+    showNotSubModal,
   } = useContext(HomeContext);
 
   const [showSettings, setShowSettings] = useState(false);
@@ -23,7 +26,8 @@ export default function Home() {
   const [showSelectedMatches, setShowSelectedMatches] = useState(false);
 
   return (
-    <>
+    <div className="md:w-3/4 w-full">
+      <NotSubModal visible={showNotSubModal} />
       <Modal
         title="Selected Matches"
         visible={showSelectedMatches}
@@ -31,7 +35,7 @@ export default function Home() {
       >
         <div className="p-4 m-4">
           <button
-            className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
+            className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm  px-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
             onClick={() => {
               setSelectedMatches(matches);
             }}
@@ -127,7 +131,7 @@ export default function Home() {
       <div className="flex flex-col p-10  min-h-screen">
         <div className=" flex md:flex-row flex-col justify-between">
           <button
-            className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
+            className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
             onClick={() => {
               setShowSelectedMatches(!showSelectedMatches);
             }}
@@ -149,7 +153,7 @@ export default function Home() {
             Selected Matches: {selectedMatches?.length ?? "loading..."}
           </button>
           <button
-            className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
+            className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
             onClick={() => {
               setShowPrompt(!showPrompt);
             }}
@@ -229,12 +233,22 @@ export default function Home() {
         {!yourTurnMatches?.length && (
           <div className="p-3 text-xl text-center my-5 text-white">
             {" "}
-            There are no convos at your turn or new matches to open. Get to
-            swipin 🔥
+            <p className="text-bold text-lg mb-5">
+              There are no convos at your turn or new matches to open. Get to
+              swipin 🔥
+            </p>
+            <button
+              className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
+              onClick={() => {
+                restart();
+              }}
+            >
+              Refresh
+            </button>
           </div>
         )}
         <MatchCard />
       </div>
-    </>
+    </div>
   );
 }

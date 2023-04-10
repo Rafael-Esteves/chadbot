@@ -14,8 +14,8 @@ export default function MatchCard() {
     messages,
     autoChatting,
     interests,
-      selectedInterest,
-      setSelectedInterest,
+    selectedInterest,
+    setSelectedInterest,
     yourTurnMatches,
   } = useContext(HomeContext);
   return match && yourTurnMatches?.length ? (
@@ -85,29 +85,43 @@ export default function MatchCard() {
         <button
           className={` ${
             loading || autoChatting ? "opacity-50" : ""
-          } bg-slate-500 text-white active:bg-slate-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
+          } bg-slate-500 text-white hover:bg-slate-600 font-bold uppercase text-sm px-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
           onClick={() => {
             generateMessage();
           }}
           disabled={loading || autoChatting}
         >
-          Generate new
+          new message
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6 inline-block ps-1"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+            />
+          </svg>
         </button>
         <button
           className={` ${
             loading || autoChatting ? "opacity-50" : ""
-          } bg-rose-400 text-white active:bg-rose-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
+          } bg-slate-500 text-white hover:bg-slate-600 font-bold uppercase text-sm px-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
           onClick={() => {
             nextMatch();
           }}
           disabled={loading || autoChatting}
         >
-          Skip for now
+          Skip match
         </button>
         <button
           className={` ${
             loading || autoChatting ? "opacity-50" : ""
-          } bg-emerald-400 text-white active:bg-emerald-600 font-bold uppercase text-sm pr-6 pl-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
+          } bg-emerald-400 text-white active:bg-emerald-600 font-bold uppercase text-sm px-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
           onClick={() => {
             sendMessage(match, message);
           }}
