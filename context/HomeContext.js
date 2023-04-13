@@ -234,7 +234,6 @@ export const HomeProvider = (props) => {
   }, [autoLikeRecs]);
 
   useEffect(() => {
-    console.log(match.person.bio);
     if (match) {
       const matchEffect = async () => {
         setLoading(true);
