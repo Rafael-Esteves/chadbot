@@ -1,6 +1,10 @@
 import { HomeContext } from "@/context/HomeContext";
 import { useContext } from "react";
 import Bubble from "./Messages/Bubble";
+import Button from "./Button";
+import ReloadIcon from "./svg/ReloadIcon";
+import ForwardIcon from "./svg/ForwardIcon";
+import SendIcon from "./svg/SendIcon";
 
 export default function MatchCard() {
   const {
@@ -37,7 +41,7 @@ export default function MatchCard() {
             return <Bubble msg={msg} key={msg._id}></Bubble>;
           })}
         {!loading && !messages?.length && (
-          <div className="flex flex-row justify-center items-center align-middle h-full">
+          <div className="flex flex-row flex-wrap justify-center h-full items-center overflow-auto no-scrollbar">
             {interests?.map((i) => {
               if (i == selectedInterest)
                 return (
@@ -47,7 +51,7 @@ export default function MatchCard() {
                       if (!autoChatting)
                         setSelectedInterest(e.target.innerHTML);
                     }}
-                    className="px-5 py-2 mx-3 border border-emerald-300 rounded-3xl cursor-pointer"
+                    className="px-5 h-min py-2 mx-1 border my-1 border-emerald-300 rounded-3xl cursor-pointer"
                   >
                     {i}
                   </div>
@@ -60,7 +64,7 @@ export default function MatchCard() {
                       if (!autoChatting)
                         setSelectedInterest(e.target.innerHTML);
                     }}
-                    className="px-5 py-2 mx-3 border border-slate-300 rounded-3xl cursor-pointer"
+                    className="px-5 h-min py-2 border mx-1 my-1 border-slate-300 rounded-3xl cursor-pointer"
                   >
                     {i}
                   </div>
@@ -82,53 +86,38 @@ export default function MatchCard() {
         disabled={loading || autoChatting}
       />
       <div className="grid md:flex md:flex-row md:justify-between">
-        <button
-          className={` ${
-            loading || autoChatting ? "opacity-50" : ""
-          } bg-slate-500 text-white hover:bg-slate-600 font-bold uppercase text-sm px-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
-          onClick={() => {
+        <Button
+          text="new message"
+          color="slate"
+          action={() => {
             generateMessage();
           }}
           disabled={loading || autoChatting}
         >
-          new message
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6 inline-block ps-1"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-            />
-          </svg>
-        </button>
-        <button
-          className={` ${
-            loading || autoChatting ? "opacity-50" : ""
-          } bg-slate-500 text-white hover:bg-slate-600 font-bold uppercase text-sm px-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
-          onClick={() => {
+          <ReloadIcon />
+        </Button>
+
+        <Button
+          text="skip match"
+          color="slate"
+          action={() => {
             nextMatch();
           }}
           disabled={loading || autoChatting}
         >
-          Skip match
-        </button>
-        <button
-          className={` ${
-            loading || autoChatting ? "opacity-50" : ""
-          } bg-emerald-400 text-white active:bg-emerald-600 font-bold uppercase text-sm px-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150`}
-          onClick={() => {
+          <ForwardIcon />
+        </Button>
+
+        <Button
+          text="send message"
+          color="emerald"
+          action={() => {
             sendMessage(match, message);
           }}
           disabled={loading || autoChatting}
         >
-          Send message
-        </button>
+          <SendIcon />
+        </Button>
       </div>
     </div>
   ) : (

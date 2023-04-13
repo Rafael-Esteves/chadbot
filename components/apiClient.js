@@ -122,6 +122,10 @@ export class API {
     return await this.tinderReqAuth("api/get-self");
   };
 
+  likeRecs = async () => {
+    return await this.tinderReqAuth("api/like-recs");
+  };
+
   //openAI
   generateMessage = async (chat_body) => {
     const resp = await axios

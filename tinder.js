@@ -5,7 +5,7 @@ export class TinderApi {
     this.token = token;
     this.headers = {
       "content-type": "application/json",
-      "User-agent": "Tinder/7.5.3 (iPhone; iOS 10.3.2; Scale/2.00)",
+      "User-agent": "Tinder/11.23.0 (iPhone; iOS 14.4; Scale/2.00)",
       "accept-language": `${accepted_languages}`,
     };
   }
@@ -34,6 +34,7 @@ export class TinderApi {
     if (response.status >= 200 && response.status < 300) {
       return await response.json();
     } else {
+      console.log(response);
       throw response.status;
     }
   };
@@ -102,6 +103,27 @@ export class TinderApi {
     return await this.postData(`user/matches/${match_id}`, {
       message: message,
     });
+  };
+
+  getRecs = async () => {
+    const response = await this.fetchData(`v2/top-picks?locale=${this.locale}`);
+    console.log(response);
+    return response;
+  };
+
+  like = async (person_id) => {
+    return await this.fetchData(`like/${person_id}`);
+  };
+
+  likeRecs = async () => {
+    const recs = await this.getRecs();
+    // for (let rec of recs) {
+    //   setTimeout(() => {
+    //     this.like(rec._id);
+    //     console.log("Liked " + rec.name);
+    //   }, 1000);
+    // }
+    return { status: "done" };
   };
 }
 

@@ -69,6 +69,7 @@ export default async function handler(req, res) {
         });
 
     res.status(200).json(subscription);
+    // res.status(200).json({ status: "trialing" });
   } catch (err) {
     res.status(err).send(err);
   }

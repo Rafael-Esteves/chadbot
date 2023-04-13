@@ -9,7 +9,6 @@ export const HomeProvider = (props) => {
   const [selectedMatches, setSelectedMatches] = useState();
   const [yourTurnMatches, setYourTurnMatches] = useState();
   const [style, setStyle] = useState();
-  const [opener, setOpener] = useState();
   const [api, setApi] = useState();
   const [match, setMatch] = useState();
   const [message, setMessage] = useState();
@@ -21,11 +20,11 @@ export const HomeProvider = (props) => {
   const [selectedInterest, setSelectedInterest] = useState();
   const [profile, setProfile] = useState();
   const prevInterest = useRef();
-  const [showNotSubModal, setShowNotSubModal] = useState(false);
-
-  useEffect(() => {
-    if (yourTurnMatches && index == -1) setIndex(0);
-  });
+  const [showTrialExpiredModal, setShowTrialExpiredModal] = useState(false);
+  const [showLockedFeatureModal, setShowLockedFeatureModal] = useState(false);
+  const [subscription, setSubscription] = useState();
+  const [autoLikeRecs, setAutoLikeRecs] = useState(false);
+  const [recsInterval, setRecsInterval] = useState();
 
   useEffect(() => {
     if (matches) {
@@ -43,10 +42,19 @@ export const HomeProvider = (props) => {
 
   useEffect(() => {
     if (!yourTurnMatches) setMatch();
+    else if (yourTurnMatches && index == -1) {
+      setIndex(0);
+    }
   }, [yourTurnMatches]);
 
   useEffect(() => {
     setMessage("");
+
+    if (index == -1) {
+      if (!matches) fetchMatches();
+      if (!subscription) fetchSubscription();
+      if (!self) fetchSelf();
+    }
 
     let intervalId;
 
@@ -101,45 +109,26 @@ export const HomeProvider = (props) => {
 
     setApi(api);
 
-    const storedStyle = localStorage.getItem("style");
-    const storedOpener = localStorage.getItem("opener");
-
-    if (storedStyle) {
-      setStyle(storedStyle);
-    } else {
-      setStyle(
-        `You are a straight man. Casually continue the conversation.\nCurrent time: $time\nCurrent date: $date`
-      );
-    }
-
-    if (storedOpener) {
-      setOpener(storedOpener);
-    } else {
-      setOpener(
-        `You are a straight man. Ask $matchname a casual question about $selectedinterest . Your language must be informal.\nCurrent time: $time\nCurrent date: $date`
-      );
-    }
-
-    if (!matches) {
-      fetchMatches();
-    }
-
-    if (!self) {
-      const selfEffect = async () => {
-        setLoading(true);
-        const resp = await api.getSelf();
-        setSelf(resp);
-        setLoading(false);
-      };
-      selfEffect();
-    }
     setIndex(-1);
   }, []);
 
+  const fetchSelf = async () => {
+    setLoading(true);
+    setSelf(await api.getSelf());
+    setLoading(false);
+  };
+
+  const fetchSubscription = async () => {
+    setLoading(true);
+    setSubscription(await api.getSubscription());
+    setLoading(false);
+  };
+
   const fetchMatches = async () => {
+    console.log("fetching matches");
     let last_token = "randomstring";
     setLoading(true);
-    const api = new API();
+    // const api = new API();
     let resp = await api.getMatches(null);
     setMatches(resp.matches);
     setLoading(false);
@@ -161,18 +150,6 @@ export const HomeProvider = (props) => {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined" && typeof style !== "undefined") {
-      localStorage.setItem("style", style);
-    }
-  }, [style]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && typeof opener !== "undefined") {
-      localStorage.setItem("opener", opener);
-    }
-  }, [opener]);
-
-  useEffect(() => {
     if (selectedMatches) {
       localStorage.setItem(
         "excluded_matches",
@@ -189,6 +166,12 @@ export const HomeProvider = (props) => {
   }, [selectedMatches]);
 
   useEffect(() => {
+    if (autoChatting && subscription.status != "active") {
+      setShowLockedFeatureModal(true);
+      setAutoChatting(false);
+      return;
+    }
+
     if (autoChatting && yourTurnMatches) {
       if (index == 0 && match) sendMessage(match, message);
       else setIndex(-1);
@@ -219,6 +202,33 @@ export const HomeProvider = (props) => {
     setLoading(false);
   };
 
+  const goToPortal = async () => {
+    setLoading(true);
+    const portalUrl = await api.getPortalUrl();
+    window.location.href = portalUrl;
+    setLoading(false);
+  };
+
+  const likeRecs = async () => {
+    setLoading(true);
+    console.log("liking recs");
+    await api.likeRecs();
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    let interval;
+    if (autoLikeRecs) {
+      likeRecs();
+      interval = setInterval(() => {
+        likeRecs();
+      }, 86400000);
+      setRecsInterval(interval);
+    } else {
+      clearInterval(recsInterval);
+    }
+  }, [autoLikeRecs]);
+
   useEffect(() => {
     prevInterest.current = selectedInterest;
 
@@ -228,10 +238,12 @@ export const HomeProvider = (props) => {
   const generateMessage = async () => {
     if (!self || !match) return;
 
+    console.log("generating");
+
     const subscription = await api.getSubscription();
 
     if (!["trialing", "active"].includes(subscription.status)) {
-      setShowNotSubModal(true);
+      setShowTrialExpiredModal(true);
       return;
     }
 
@@ -240,6 +252,7 @@ export const HomeProvider = (props) => {
     setLoading(true);
     //get info about the user
     const user = self.user;
+    console.log(self);
 
     const name = match.person.name.split(" ")[0];
 
@@ -252,22 +265,37 @@ export const HomeProvider = (props) => {
     //   return `${descriptor.name}: ${descriptor.choice_selections[0].name}.`;
     // });
 
+    //figure out language
+
     const distance_km = parseInt(profile.distance_mi / 0.621371);
     const now = new Date();
 
-    const replaceVariables = (text) => {
-      return text
-        .replaceAll("$yourname", user.name)
-        .replaceAll("$yourgender", user.gender == 1 ? "woman" : "man")
-        .replaceAll("$distancemi", profile.distance_mi)
-        .replaceAll("$distancekm", distance_km)
-        .replaceAll("$matchname", name)
-        .replaceAll("$matchinterests", interests?.join(", "))
-        .replaceAll("$date", now.toLocaleDateString())
-        .replaceAll("$selectedinterest", selectedInterest ?? "small talk")
+    const phoneString = user.phone_id
+      ? `Your phone number is +${user.phone_id}.`
+      : "";
 
-        .replaceAll("$time", now.toLocaleTimeString());
-    };
+    const instaString = self.instagram?.username
+      ? `Your instagram username is +${self.instagram.username}.`
+      : "";
+
+    const interestString = selectedInterest
+      ? `Your response may be related to ${selectedInterest}`
+      : "";
+
+    const language = `Respond in the natural language of ${user.pos_info.country.name}.\n `;
+
+    const context = `Context: You are ${user.name}, a ${
+      user.gender == 0 ? "man" : "woman"
+    }. You live in ${user.city.name} - ${
+      user.city.region
+    } Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()}. You are texting back and forth with ${name}.\n`;
+
+    const style = `Use informal language. Prefer short and impactful messages.\n`;
+
+    const opener = `You just matched with ${name} on Tinder. Send them a pick up line. ${interestString} Make it sound cool and confident. Make sure it's NOT cringy.`;
+    const goal1 = `Your goal is to bond with ${name} over common interests`;
+    const goal2 = `Ask ${name} what they like to do for fun.`;
+    const goal3 = `Casually suggest going out with ${name} in ${user.city.name}.`;
 
     const rawMessages = await api.getMessages(match._id);
     setMessages(rawMessages);
@@ -281,14 +309,34 @@ export const HomeProvider = (props) => {
       })
       .reverse();
 
+    let systemMsg;
+    switch (rawMessages.length) {
+      case 0:
+        systemMsg = language + opener;
+        break;
+      case rawMessages.length < 4:
+        systemMsg = context + language + style + goal1;
+        break;
+      case rawMessages.length < 8:
+        systemMsg = context + language + style + goal2;
+        break;
+      case rawMessages.length < 12:
+        systemMsg = context + language + style + goal3;
+        break;
+      case rawMessages.length > 20 && rawMessages.length < 25:
+        systemMsg = context + language + style + goal3;
+        break;
+      default:
+        systemMsg =
+          context + language + phoneString + instaString + style + goal1;
+    }
+
     //it turns out my multi step approach was indeed the way to go. You start off easy with the question prompt, then you invite for the date, set up details and get or send number
 
     const messagesGPT = [
       {
         role: "system",
-        content: !rawMessages.length
-          ? replaceVariables(opener)
-          : replaceVariables(style),
+        content: systemMsg,
       },
       ...messageObjects,
     ];
@@ -300,7 +348,7 @@ export const HomeProvider = (props) => {
       max_tokens: 400,
       stop: ["#", "^s*$"],
       frequency_penalty: 0.5,
-      logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100 },
+      logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100, 5540: -100 },
     };
 
     const msg = await api.generateMessage(chatBody);
@@ -325,10 +373,6 @@ export const HomeProvider = (props) => {
         setSelectedMatches,
         yourTurnMatches,
         setYourTurnMatches,
-        style,
-        setStyle,
-        opener,
-        setOpener,
         match,
         setMatch,
         message,
@@ -341,7 +385,15 @@ export const HomeProvider = (props) => {
         selectedInterest,
         setSelectedInterest,
         restart,
-        showNotSubModal
+        showTrialExpiredModal,
+        setShowTrialExpiredModal,
+        api,
+        showLockedFeatureModal,
+        setShowLockedFeatureModal,
+        goToPortal,
+        autoLikeRecs,
+        setAutoLikeRecs,
+        subscription,
       }}
     >
       {props.children}
