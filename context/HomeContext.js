@@ -279,7 +279,7 @@ export const HomeProvider = (props) => {
       : "";
 
     const interestString = selectedInterest
-      ? `Your response may be related to ${selectedInterest}`
+      ? `${name} is interested in ${selectedInterest}`
       : "";
 
     const language = `Respond in English\n `;
@@ -293,7 +293,7 @@ export const HomeProvider = (props) => {
 
     const style = `Use informal language. Prefer short and impactful messages.\n`;
 
-    const opener = `You just matched with ${name} on Tinder. Send them a pick up line. ${interestString} Make it sound cool and confident. Make sure it's NOT cringy. Avoid introductions and go straight to the point.`;
+    const opener = `You just matched with ${name} on Tinder. Send them a pick up line. ${interestString} Make it sound cool and confident. Make sure it's NOT cringy. Prefer short and witty messages.`;
     const goal1 = `Your goal is to bond with ${name} over common interests`;
     const goal2 = `Ask ${name} what they like to do for fun.`;
     const goal3 = `Casually suggest going out with ${name} in ${user.city.name}.`;
