@@ -48,7 +48,11 @@ export const HomeProvider = (props) => {
   }, [yourTurnMatches]);
 
   useEffect(() => {
+    setLoading(true);
+
     setMessage("");
+    setSelectedInterest("");
+    setMessages([]);
 
     if (index == -1) {
       if (!matches) fetchMatches();
@@ -71,12 +75,12 @@ export const HomeProvider = (props) => {
             );
             setInterests(interests);
 
-            const randIndex = Math.floor(
-              Math.random() * interests?.length || 0
-            );
-            const interest = interests ? interests[randIndex] : null;
-            //gotta make sure the selected interest changes everytime the match changes to ensure message generation
-            setSelectedInterest(interest);
+            // const randIndex = Math.floor(
+            //   Math.random() * interests?.length || 0
+            // );
+            // const interest = interests ? interests[randIndex] : null;
+            // //gotta make sure the selected interest changes everytime the match changes to ensure message generation
+            // setSelectedInterest(interest);
             setMatch(newMatch);
           };
           newMatchEffect();
@@ -230,9 +234,21 @@ export const HomeProvider = (props) => {
   }, [autoLikeRecs]);
 
   useEffect(() => {
+    console.log(match.person.bio);
+    if (match) {
+      const matchEffect = async () => {
+        setLoading(true);
+        await generateMessage();
+        setLoading(false);
+      };
+      matchEffect();
+    }
+  }, [match]);
+
+  useEffect(() => {
     prevInterest.current = selectedInterest;
 
-    if (match) generateMessage();
+    if (match && selectedInterest !== null) generateMessage();
   }, [selectedInterest]);
 
   const generateMessage = async () => {
@@ -274,6 +290,8 @@ export const HomeProvider = (props) => {
       ? `Your phone number is +${user.phone_id}.`
       : "";
 
+    const bioString = `This is their bio: ${match.person.bio}`;
+
     const instaString = self.instagram?.username
       ? `Your instagram username is +${self.instagram.username}.`
       : "";
@@ -282,8 +300,8 @@ export const HomeProvider = (props) => {
       ? `${name} is interested in ${selectedInterest}`
       : "";
 
-    const language = `Respond in English\n `;
-    // const language = `Respond in the natural language of ${user.pos_info.country.name}.\n `;
+    // const language = `Respond in English\n `;
+    const language = `Respond in the natural language of ${user.pos_info.country.name}.\n `;
 
     const context = `Context: You are ${user.name}, a ${
       user.gender == 0 ? "man" : "woman"
@@ -293,7 +311,7 @@ export const HomeProvider = (props) => {
 
     const style = `Use informal language. Prefer short and impactful messages.\n`;
 
-    const opener = `You just matched with ${name} on Tinder. Send them a pick up line. ${interestString} Make it sound cool and confident. Make sure it's NOT cringy. Prefer short and witty messages.`;
+    const opener = `You just matched with ${name} on Tinder. Send them a pick up line.  Make it sound cool and confident. Make sure it's NOT cringy. Prefer short and witty messages. ${interestString} ${bioString}`;
     const goal1 = `Your goal is to bond with ${name} over common interests`;
     const goal2 = `Ask ${name} what they like to do for fun.`;
     const goal3 = `Casually suggest going out with ${name} in ${user.city.name}.`;

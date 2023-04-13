@@ -34,43 +34,56 @@ export default function MatchCard() {
 
       <div className="text-xl my-5 text-white">{match.person.name}</div>
       <div
-        className={`flex overflow-auto no-scrollbar text-white h-40 mb-5  flex-col-reverse`}
+        className={`flex overflow-auto no-scrollbar text-white h-40 mb-5  flex-col`}
       >
-        {!loading &&
-          messages?.map((msg) => {
-            return <Bubble msg={msg} key={msg._id}></Bubble>;
-          })}
-        {!loading && !messages?.length && (
-          <div className="flex flex-row flex-wrap justify-center h-full items-center overflow-auto no-scrollbar">
-            {interests?.map((i) => {
-              if (i == selectedInterest)
-                return (
-                  <div
-                    id={i}
-                    onClick={(e) => {
-                      if (!autoChatting)
-                        setSelectedInterest(e.target.innerHTML);
-                    }}
-                    className="px-5 h-min py-2 mx-1 border my-1 border-emerald-300 rounded-3xl cursor-pointer"
-                  >
-                    {i}
-                  </div>
-                );
-              else
-                return (
-                  <div
-                    id={i}
-                    onClick={(e) => {
-                      if (!autoChatting)
-                        setSelectedInterest(e.target.innerHTML);
-                    }}
-                    className="px-5 h-min py-2 border mx-1 my-1 border-slate-300 rounded-3xl cursor-pointer"
-                  >
-                    {i}
-                  </div>
-                );
+        {!loading && messages.length > 0 && (
+          <div className="flex flex-col-reverse h-40 overflow-auto no-scrollbar">
+            {messages?.map((msg) => {
+              return <Bubble msg={msg} key={msg._id}></Bubble>;
             })}
           </div>
+        )}
+
+        {!loading && !messages?.length && interests?.length > 0 && (
+          <>
+            <div className="h2">
+              Click one of the interests to generate a targeted opener.
+            </div>
+            <div className="flex flex-row flex-wrap justify-center items-center my-4">
+              {interests?.map((i) => {
+                if (i == selectedInterest)
+                  return (
+                    <div
+                      key={i}
+                      onClick={(e) => {
+                        if (!autoChatting) {
+                          setSelectedInterest(null);
+                        }
+                      }}
+                      className="px-5 h-min py-2 mx-1 border my-1 border-emerald-300 rounded-3xl cursor-pointer"
+                    >
+                      {i}
+                    </div>
+                  );
+                else
+                  return (
+                    <div
+                      key={i}
+                      onClick={(e) => {
+                        if (!autoChatting)
+                          setSelectedInterest(e.target.innerHTML);
+                      }}
+                      className="px-5 h-min py-2 border mx-1 my-1 border-slate-300 rounded-3xl cursor-pointer"
+                    >
+                      {i}
+                    </div>
+                  );
+              })}
+            </div>
+          </>
+        )}
+        {match.person.bio && (
+          <div dangerouslySetInnerHTML={{ __html: match.person.bio }}></div>
         )}
       </div>
       <textarea
