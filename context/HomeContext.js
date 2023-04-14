@@ -310,7 +310,7 @@ export const HomeProvider = (props) => {
 
     const style = `Use informal language. Prefer short and impactful messages.\n`;
 
-    const opener = `${yourGender} You just matched with ${name}. Send them a pick up line.  Make it sound cool and confident. Make sure it's NOT cringy. Prefer short and witty messages. ${
+    const opener = `${yourGender} You just matched with ${name}. Send them a pick up line.  Make sure it's NOT cringy. Prefer short and witty messages. ${
       interestString ?? bioString
     }`;
     const goal1 = `Ask something about ${name} to get to know them better.`;
