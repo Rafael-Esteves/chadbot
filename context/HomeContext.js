@@ -19,7 +19,6 @@ export const HomeProvider = (props) => {
   const [interests, setInterests] = useState([]);
   const [selectedInterest, setSelectedInterest] = useState();
   const [profile, setProfile] = useState();
-  const prevInterest = useRef();
   const [showTrialExpiredModal, setShowTrialExpiredModal] = useState(false);
   const [showLockedFeatureModal, setShowLockedFeatureModal] = useState(false);
   const [subscription, setSubscription] = useState();
@@ -50,8 +49,8 @@ export const HomeProvider = (props) => {
   useEffect(() => {
     setLoading(true);
 
-    setMessage("");
-    setSelectedInterest("");
+    setMessage();
+    setSelectedInterest();
     setMessages([]);
 
     if (index == -1) {
@@ -75,12 +74,14 @@ export const HomeProvider = (props) => {
             );
             setInterests(interests);
 
-            // const randIndex = Math.floor(
-            //   Math.random() * interests?.length || 0
-            // );
-            // const interest = interests ? interests[randIndex] : null;
-            // //gotta make sure the selected interest changes everytime the match changes to ensure message generation
-            // setSelectedInterest(interest);
+            if (!newMatch.person.bio) {
+              const randIndex = Math.floor(
+                Math.random() * interests?.length || 0
+              );
+              const interest = interests ? interests[randIndex] : null;
+              //gotta make sure the selected interest changes everytime the match changes to ensure message generation
+              setSelectedInterest(interest);
+            }
             setMatch(newMatch);
           };
           newMatchEffect();
@@ -91,7 +92,6 @@ export const HomeProvider = (props) => {
         if (autoChatting) {
           intervalId = setInterval(() => {
             restart();
-            console.log("interval triggered");
           }, 300000);
           setIntervalIdState(intervalId);
         }
@@ -129,7 +129,6 @@ export const HomeProvider = (props) => {
   };
 
   const fetchMatches = async () => {
-    console.log("fetching matches");
     let last_token = "randomstring";
     setLoading(true);
     // const api = new API();
@@ -185,8 +184,6 @@ export const HomeProvider = (props) => {
   }, [autoChatting]);
 
   const nextMatch = () => {
-    console.log("next match");
-    console.log(yourTurnMatches);
     setMessage("");
     setIndex(index + 1);
   };
@@ -215,7 +212,6 @@ export const HomeProvider = (props) => {
 
   const likeRecs = async () => {
     setLoading(true);
-    console.log("liking recs");
     await api.likeRecs();
     setLoading(false);
   };
@@ -241,13 +237,13 @@ export const HomeProvider = (props) => {
         setLoading(false);
       };
       matchEffect();
+    } else {
+      setLoading(false);
     }
   }, [match]);
 
   useEffect(() => {
-    prevInterest.current = selectedInterest;
-
-    if (match && selectedInterest !== null) generateMessage();
+    match && !loading && generateMessage();
   }, [selectedInterest]);
 
   const generateMessage = async () => {
@@ -261,8 +257,6 @@ export const HomeProvider = (props) => {
       setShowTrialExpiredModal(true);
       return;
     }
-
-    console.log(subscription);
 
     setLoading(true);
     //get info about the user
@@ -297,21 +291,24 @@ export const HomeProvider = (props) => {
 
     const interestString = selectedInterest
       ? `${name} is interested in ${selectedInterest}`
-      : "";
+      : null;
 
-    // const language = `Respond in English\n `;
     const language = `Respond in the natural language of ${user.pos_info.country.name}.\n `;
 
-    const context = `Context: You are ${user.name}, a ${
-      user.gender == 0 ? "man" : "woman"
-    }. You live in ${user.city.name} - ${
+    const yourGender = `You are a ${user.gender == 0 ? "man" : "woman"}.`;
+
+    const context = `Context: You are ${user.name}. ${yourGender} You live in ${
+      user.city.name
+    } - ${
       user.city.region
     } Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()}. You are texting back and forth with ${name}.\n`;
 
     const style = `Use informal language. Prefer short and impactful messages.\n`;
 
-    const opener = `You just matched with ${name} on Tinder. Send them a pick up line.  Make it sound cool and confident. Make sure it's NOT cringy. Prefer short and witty messages. ${interestString} ${bioString}`;
-    const goal1 = `Your goal is to bond with ${name} over common interests`;
+    const opener = `${yourGender} You just met ${name} online. Send them a pick up line.  Make it sound cool and confident. Make sure it's NOT cringy. Prefer short and witty messages. ${
+      interestString ?? bioString
+    }`;
+    const goal1 = `Ask something about ${name} to get to know them better.`;
     const goal2 = `Ask ${name} what they like to do for fun.`;
     const goal3 = `Casually suggest going out with ${name} in ${user.city.name}.`;
 

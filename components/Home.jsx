@@ -20,6 +20,7 @@ export default function Home() {
     restart,
     goToPortal,
     subscription,
+    setMatch,
   } = useContext(HomeContext);
 
   const [showSelectedMatches, setShowSelectedMatches] = useState(false);
@@ -52,6 +53,8 @@ export default function Home() {
                   key={match._id}
                   match={match}
                   selected={selected}
+                  setMatch={setMatch}
+                  setShowSelectedMatches={setShowSelectedMatches}
                 ></Match>
               );
             })}

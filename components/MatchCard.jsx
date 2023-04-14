@@ -56,9 +56,7 @@ export default function MatchCard() {
                     <div
                       key={i}
                       onClick={(e) => {
-                        if (!autoChatting) {
-                          setSelectedInterest(null);
-                        }
+                        !autoChatting && setSelectedInterest(false);
                       }}
                       className="px-5 h-min py-2 mx-1 border my-1 border-emerald-300 rounded-3xl cursor-pointer"
                     >
@@ -82,7 +80,7 @@ export default function MatchCard() {
             </div>
           </>
         )}
-        {match.person.bio && (
+        {!loading && match.person.bio && !messages?.length && (
           <div dangerouslySetInnerHTML={{ __html: match.person.bio }}></div>
         )}
       </div>
