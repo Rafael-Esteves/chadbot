@@ -41,9 +41,9 @@ export const HomeProvider = (props) => {
 
   useEffect(() => {
     if (!yourTurnMatches) setMatch();
-    else if (yourTurnMatches && index == -1) {
+    else if (index == -1) {
       setIndex(0);
-    }
+    } else if (yourTurnMatches[index]) setMatch(yourTurnMatches[index]);
   }, [yourTurnMatches]);
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export const HomeProvider = (props) => {
 
     let intervalId;
 
-    if (yourTurnMatches) {
+    if (yourTurnMatches?.length) {
       if (index <= yourTurnMatches.length) {
         const newMatch = yourTurnMatches[index];
         if (newMatch) {
@@ -89,6 +89,7 @@ export const HomeProvider = (props) => {
           nextMatch();
         }
       } else {
+        setMatch();
         if (autoChatting) {
           intervalId = setInterval(() => {
             restart();
@@ -174,23 +175,28 @@ export const HomeProvider = (props) => {
       setAutoChatting(false);
       return;
     }
-
-    if (autoChatting && yourTurnMatches) {
-      if (index == 0 && match) sendMessage(match, message);
-      else setIndex(-1);
-    } else {
-      clearInterval(intervalIdState);
-    }
+    const autoChattingEffect = async () => {
+      if (autoChatting && yourTurnMatches) {
+        if (index == 0 && match) await sendMessage(match, message);
+        else setIndex(-1);
+      } else {
+        clearInterval(intervalIdState);
+      }
+    };
+    autoChattingEffect();
   }, [autoChatting]);
 
   const nextMatch = () => {
+    console.log("inside next match, current index:", index);
+    console.log("inside next match, yourTurnM", yourTurnMatches);
     setMessage("");
     setIndex(index + 1);
   };
 
   const sendMessage = async (match, message) => {
     setLoading(true);
-    const result = await api.sendMessage(match._id, message);
+    // const result = await api.sendMessage(match._id, message);
+    const result = { sent_date: true };
     //remove match from yourturn
     if (result.sent_date) {
       setYourTurnMatches((prev) => prev.filter((m) => m._id != match?._id));
@@ -199,7 +205,6 @@ export const HomeProvider = (props) => {
     } else {
       console.log("Message not sent.");
     }
-    nextMatch();
     setLoading(false);
   };
 
@@ -243,7 +248,7 @@ export const HomeProvider = (props) => {
   }, [match]);
 
   useEffect(() => {
-    match && !loading && generateMessage();
+    match && !loading && !autoChatting && generateMessage();
   }, [selectedInterest]);
 
   const generateMessage = async () => {
@@ -305,7 +310,7 @@ export const HomeProvider = (props) => {
 
     const style = `Use informal language. Prefer short and impactful messages.\n`;
 
-    const opener = `${yourGender} You just met ${name} online. Send them a pick up line.  Make it sound cool and confident. Make sure it's NOT cringy. Prefer short and witty messages. ${
+    const opener = `${yourGender} You just matched with ${name}. Send them a pick up line.  Make it sound cool and confident. Make sure it's NOT cringy. Prefer short and witty messages. ${
       interestString ?? bioString
     }`;
     const goal1 = `Ask something about ${name} to get to know them better.`;
@@ -370,7 +375,7 @@ export const HomeProvider = (props) => {
 
     setMessage(msg);
 
-    if (autoChatting) sendMessage(match, msg);
+    if (autoChatting) await sendMessage(match, msg);
     setLoading(false);
     return msg;
   };

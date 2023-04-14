@@ -8,6 +8,7 @@ import Button from "./Button";
 import LockedFeatureModal from "./LockedFeatureModal";
 import ListIcon from "./svg/ListIcon";
 import Switch from "./Switch";
+import ReloadIcon from "./svg/ReloadIcon";
 
 export default function Home() {
   const {
@@ -21,6 +22,7 @@ export default function Home() {
     goToPortal,
     subscription,
     setMatch,
+    loading,
   } = useContext(HomeContext);
 
   const [showSelectedMatches, setShowSelectedMatches] = useState(false);
@@ -34,14 +36,22 @@ export default function Home() {
         visible={showSelectedMatches}
         setVisible={setShowSelectedMatches}
       >
-        <div className="p-4 m-4">
+        <div className="p-4 m-4 flex flex-row">
           <Button
             text="Select all"
             action={() => {
               setSelectedMatches(matches);
             }}
           />
+          <Button
+            text="deselect all"
+            color="slate"
+            action={() => {
+              setSelectedMatches([]);
+            }}
+          />
         </div>
+
         <div className="overflow-auto no-scrollbar h-96 text-white ">
           {matches &&
             matches.map((match) => {
@@ -112,20 +122,22 @@ export default function Home() {
           </div> */}
         </div>
         {!yourTurnMatches?.length && (
-          <div className="p-3 text-xl text-center my-5 text-white">
+          <div className="p-3 text-xl text-center my-5 text-white flex flex-col content-center">
             {" "}
             <p className="text-bold text-lg mb-5">
               There are no convos at your turn or new matches to open. Get to
               swipin 🔥
             </p>
-            <button
-              className={`bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-3 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150`}
-              onClick={() => {
+            <Button
+              text="refresh"
+              action={() => {
                 restart();
               }}
+              visible={!autoChatting}
+              disabled={loading}
             >
-              Refresh
-            </button>
+              <ReloadIcon />
+            </Button>
           </div>
         )}
         <MatchCard />
