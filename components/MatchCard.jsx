@@ -36,7 +36,7 @@ export default function MatchCard() {
       <div
         className={`flex overflow-auto no-scrollbar text-white h-40 mb-5  flex-col`}
       >
-        {!loading && messages.length > 0 && (
+        {!loading && messages?.length > 0 && (
           <div className="flex flex-col-reverse h-40 overflow-auto no-scrollbar">
             {messages?.map((msg) => {
               return <Bubble msg={msg} key={msg._id}></Bubble>;
