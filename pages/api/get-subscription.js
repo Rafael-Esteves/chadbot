@@ -59,7 +59,7 @@ export default async function handler(req, res) {
       : await stripe.subscriptions.create({
           customer: customerId,
           items: [{ price: process.env.PRICE_ID }],
-          trial_period_days: 7,
+          trial_period_days: 3,
           currency: getCurrencyCodeFromPhone(customer.phone),
           trial_settings: {
             end_behavior: {
