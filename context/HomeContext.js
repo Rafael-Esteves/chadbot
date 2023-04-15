@@ -47,6 +47,8 @@ export const HomeProvider = (props) => {
   }, [yourTurnMatches]);
 
   useEffect(() => {
+    console.log(yourTurnMatches);
+    setLoading(true);
     if (index == -1) {
       if (!matches) fetchMatches();
       if (!subscription) fetchSubscription();
@@ -176,6 +178,8 @@ export const HomeProvider = (props) => {
     const result = await api.sendMessage(match._id, message);
     // const result = { sent_date: true };
     //remove match from yourturn
+
+    console.log("Send message result", result);
     if (result.sent_date) {
       setYourTurnMatches((prev) => prev.filter((m) => m._id != match?._id));
       console.log("Message:", message);
@@ -183,7 +187,6 @@ export const HomeProvider = (props) => {
     } else {
       console.log("Message not sent.");
     }
-    setLoading(false);
   };
 
   const goToPortal = async () => {
@@ -214,7 +217,6 @@ export const HomeProvider = (props) => {
 
   useEffect(() => {
     if (match) {
-      setLoading(true);
       setMessage();
       setSelectedInterest();
       setMessages([]);
@@ -229,7 +231,7 @@ export const HomeProvider = (props) => {
 
         const randIndex = Math.floor(Math.random() * interests?.length || 0);
         const interest = interests ? interests[randIndex] : null;
-        //gotta make sure the selected interest changes everytime the match changes to ensure message generation
+
         setSelectedInterest(interest);
       };
       matchEffect();
@@ -265,6 +267,8 @@ export const HomeProvider = (props) => {
       return;
     }
 
+    console.log(selectedInterest);
+
     setLoading(true);
     //get info about the user
     const user = self.user;
@@ -293,7 +297,7 @@ export const HomeProvider = (props) => {
     const bioString = `This is their bio: ${match.person.bio}`;
 
     const instaString = self.instagram?.username
-      ? `Your instagram username is +${self.instagram.username}.`
+      ? `Your instagram username is ${self.instagram.username}.`
       : "";
 
     const interestString = selectedInterest
@@ -306,13 +310,11 @@ export const HomeProvider = (props) => {
 
     const context = `Context: You are ${user.name}. ${yourGender} You live in ${
       user.city.name
-    } - ${
-      user.city.region
     } Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()}. You are texting back and forth with ${name}.\n`;
 
-    const style = `Use informal language. Prefer short and impactful messages.\n`;
+    const style = `Use informal language. Prefer short and impactful messages. Be sarcastic.\n`;
 
-    const opener = `${yourGender} You just matched with ${name}. Send them a pick up line.  Make sure it's NOT cringy. Prefer short and witty messages. ${
+    const opener = `${yourGender} You just matched with ${name} on Tinder. Send them a funny pick up line. Avoid compliments, make use of double entendres, be sarcastic and make sure it's NOT cringy. Prefer short and witty messages. ${
       interestString ?? bioString
     }`;
     const goal1 = `Ask something about ${name} to get to know them better.`;

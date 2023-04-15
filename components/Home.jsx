@@ -108,7 +108,7 @@ export default function Home() {
             action={() => {
               setAutoChatting(!autoChatting);
             }}
-            label="Auto chat"
+            label="Auto chat (beta)"
           />
           {/* <div className="my-2 md:my-0">
             <Switch
