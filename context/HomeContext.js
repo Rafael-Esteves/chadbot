@@ -47,12 +47,6 @@ export const HomeProvider = (props) => {
   }, [yourTurnMatches]);
 
   useEffect(() => {
-    setLoading(true);
-
-    setMessage();
-    setSelectedInterest();
-    setMessages([]);
-
     if (index == -1) {
       if (!matches) fetchMatches();
       if (!subscription) fetchSubscription();
@@ -66,22 +60,6 @@ export const HomeProvider = (props) => {
         const newMatch = yourTurnMatches[index];
         if (newMatch) {
           const newMatchEffect = async () => {
-            const profile = await api.getProfile(newMatch.person._id);
-            setProfile(profile);
-
-            const interests = profile?.user_interests?.selected_interests.map(
-              (interest) => interest.name
-            );
-            setInterests(interests);
-
-            if (!newMatch.person.bio) {
-              const randIndex = Math.floor(
-                Math.random() * interests?.length || 0
-              );
-              const interest = interests ? interests[randIndex] : null;
-              //gotta make sure the selected interest changes everytime the match changes to ensure message generation
-              setSelectedInterest(interest);
-            }
             setMatch(newMatch);
           };
           newMatchEffect();
@@ -236,16 +214,40 @@ export const HomeProvider = (props) => {
 
   useEffect(() => {
     if (match) {
+      setLoading(true);
+      setMessage();
+      setSelectedInterest();
+      setMessages([]);
       const matchEffect = async () => {
-        setLoading(true);
-        await generateMessage();
-        setLoading(false);
+        const profile = await api.getProfile(match.person._id);
+        setProfile(profile);
+
+        const interests = profile?.user_interests?.selected_interests.map(
+          (interest) => interest.name
+        );
+        setInterests(interests);
+
+        const randIndex = Math.floor(Math.random() * interests?.length || 0);
+        const interest = interests ? interests[randIndex] : null;
+        //gotta make sure the selected interest changes everytime the match changes to ensure message generation
+        setSelectedInterest(interest);
       };
       matchEffect();
     } else {
       setLoading(false);
     }
   }, [match]);
+
+  useEffect(() => {
+    if (profile) {
+      const profileEffect = async () => {
+        setLoading(true);
+        await generateMessage();
+        setLoading(false);
+      };
+      profileEffect();
+    }
+  }, [profile]);
 
   useEffect(() => {
     match && !loading && !autoChatting && generateMessage();

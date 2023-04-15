@@ -9,9 +9,11 @@ export default function Match({
   return (
     <div className="flex flex-row h-24 border-b border-slate-400">
       <div
-        className={`flex flex-row py-2 align-middle cursor-pointer hover:bg-${
-          selected ? "emerald" : "slate"
-        }-400 bg-${selected ? "emerald" : "slate"}-100 text-black w-full`}
+        className={`flex flex-row py-2 align-middle cursor-pointer ${
+          selected
+            ? "bg-emerald-100 hover:bg-emerald-400"
+            : "bg-slate-100 hover:bg-slate-400"
+        } text-black w-full`}
         onClick={() => {
           if (selected)
             setSelectedMatches(
