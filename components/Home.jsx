@@ -59,6 +59,7 @@ export default function Home() {
               return (
                 <Match
                   match={match}
+                  key={match._id}
                   selected={selected}
                   setShowSelectedMatches={setShowSelectedMatches}
                 ></Match>

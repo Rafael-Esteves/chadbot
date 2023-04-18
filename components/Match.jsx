@@ -5,10 +5,7 @@ export default function Match({ selected, setShowSelectedMatches, match }) {
   const { selectedMatches, setSelectedMatches, setMatch } =
     useContext(HomeContext);
   return (
-    <div
-      className="flex flex-row h-24 border-b border-slate-400"
-      key={match._id}
-    >
+    <div className="flex flex-row h-24 border-b border-slate-400">
       <div
         className={`flex flex-row py-2 align-middle cursor-pointer ${
           selected
