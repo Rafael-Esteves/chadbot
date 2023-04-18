@@ -181,7 +181,7 @@ export const HomeProvider = (props) => {
 
     console.log("Send message result", result);
     if (result.sent_date) {
-      setYourTurnMatches((prev) => prev.filter((m) => m._id != match?._id));
+      setSelectedMatches((prev) => prev.filter((m) => m._id != match?._id));
       console.log("Message:", message);
       console.log("Sent to:", match.person.name);
     } else {
@@ -290,6 +290,15 @@ export const HomeProvider = (props) => {
     const distance_km = parseInt(profile.distance_mi / 0.621371);
     const now = new Date();
 
+    const yourInterests = profile?.user_interests?.selected_interests.map(
+      (interest) => interest.name
+    );
+
+    const randIndex = Math.floor(Math.random() * interests?.length || 0);
+
+    const yourInterestsString = yourInterests
+      ? "You like " + yourInterests[randIndex]
+      : "";
     const phoneString = user.phone_id
       ? `Your phone number is +${user.phone_id}.`
       : "";
@@ -301,7 +310,7 @@ export const HomeProvider = (props) => {
       : "";
 
     const interestString = selectedInterest
-      ? `${name} is interested in ${selectedInterest}`
+      ? `${name} claims to like ${selectedInterest}`
       : null;
 
     const language = `Respond in the natural language of ${user.pos_info.country.name}.\n `;
@@ -310,15 +319,15 @@ export const HomeProvider = (props) => {
 
     const context = `Context: You are ${user.name}. ${yourGender} You live in ${
       user.city.name
-    } Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()}. You are texting back and forth with ${name}.\n`;
+    } Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()} do NOT talk about the pandemic. ${yourInterestsString} You are texting back and forth with ${name}, a person you matched on Tinder.\n`;
 
-    const style = `Use informal language. Prefer short and impactful messages. Be sarcastic.\n`;
+    const style = `Use informal language. Do NOT compliment, prefer short and witty messages. Be lighthearted and fun. Make sure it's NOT cringy. \n`;
 
-    const opener = `${yourGender} You just matched with ${name} on Tinder. Send them a funny pick up line. Avoid compliments, make use of double entendres, be sarcastic and make sure it's NOT cringy. Prefer short and witty messages. ${
+    const opener = `${yourGender} You just matched with ${name} on Tinder. Send them a witty pick up line. Avoid compliments, use double entendres. ${
       interestString ?? bioString
     }`;
-    const goal1 = `Ask something about ${name} to get to know them better.`;
-    const goal2 = `Ask ${name} what they like to do for fun.`;
+    const goal1 = `Go with the flow. Ask them questions about the content of their messages to show interest in the conversation.`;
+    const goal2 = `Go with the flow. `;
     const goal3 = `Casually suggest going out with ${name} in ${user.city.name}.`;
 
     const rawMessages = await api.getMessages(match._id);
@@ -336,7 +345,7 @@ export const HomeProvider = (props) => {
     let systemMsg;
     switch (rawMessages.length) {
       case 0:
-        systemMsg = language + opener;
+        systemMsg = language + style + opener;
         break;
       case rawMessages.length < 4:
         systemMsg = context + language + style + goal1;
@@ -368,7 +377,7 @@ export const HomeProvider = (props) => {
     const chatBody = {
       model: "gpt-3.5-turbo",
       messages: messagesGPT,
-      temperature: 0.5,
+      temperature: 0.4,
       max_tokens: 400,
       stop: ["#", "^s*$"],
       frequency_penalty: 0.5,

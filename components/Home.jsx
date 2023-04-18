@@ -58,12 +58,8 @@ export default function Home() {
               const selected = selectedMatches?.includes(match);
               return (
                 <Match
-                  setSelectedMatches={setSelectedMatches}
-                  selectedMatches={selectedMatches}
-                  key={match._id}
                   match={match}
                   selected={selected}
-                  setMatch={setMatch}
                   setShowSelectedMatches={setShowSelectedMatches}
                 ></Match>
               );
