@@ -359,16 +359,38 @@ export const HomeProvider = (props) => {
       ...messageObjects,
     ];
 
+    // if (rawMessages.length > 4) {
+    //   const checkIfIsFinishedPrompt = `Respond in JSON only! This is what your response should look like: { "date_set": true|false, "contact_info_exchanged": true|false } Has a date been agreed upon on the following chat? Have contact information been exchanged in the following chat?`;
+    //   const messagesCheckFinished = [
+    //     {
+    //       role: "system",
+    //       content: checkIfIsFinishedPrompt,
+    //     },
+    //     { role: "user", content: messageObjects },
+    //   ];
+    //   const body = {
+    //     model: "gpt-3.5-turbo",
+    //     messages: messagesCheckFinished,
+    //     top_p: 0.1,
+    //     max_tokens: 400,
+    //   };
+    //   const checkFinished = await api.generateMessage(body);
+    //   console.log(checkFinished);
+    // }
+
     const chatBody = {
       model: "gpt-3.5-turbo",
       messages: messagesGPT,
-      temperature: 0.4,
+      // temperature: 0.4,
+      top_p: 0.1,
       max_tokens: 400,
       stop: ["#", "^s*$"],
       logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100, 5540: -100 },
     };
 
-    const msg = await api.generateMessage(chatBody);
+    const msgObject = await api.generateMessage(chatBody);
+
+    const msg = msgObject.content;
 
     setMessage(msg);
 

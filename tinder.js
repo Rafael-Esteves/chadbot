@@ -94,7 +94,7 @@ export class TinderApi {
 
   getMessages = async (match_id) => {
     const res = await this.fetchData(
-      `v2/matches/${match_id}/messages?locale=${this.locale}&count=50`
+      `v2/matches/${match_id}/messages?locale=${this.locale}&count=20`
     );
     return res.data.messages;
   };
