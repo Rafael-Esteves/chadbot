@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
     const response = await openai.createChatCompletion(req.body.chat_body);
 
-    console.log(response);
+    console.log("response", response);
 
     const message = response.data.choices[0].message;
     console.log(message);
@@ -23,11 +23,4 @@ export default async function handler(req, res) {
   }
 }
 
-const processMessage = (msg) => {
-  let split = msg.split("?")[0];
-  if (msg.includes("?")) {
-    split = split + "?";
-  }
 
-  return split;
-};

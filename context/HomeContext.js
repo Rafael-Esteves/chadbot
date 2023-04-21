@@ -40,7 +40,7 @@ export const HomeProvider = (props) => {
   }, [matches]);
 
   useEffect(() => {
-    if (!yourTurnMatches) setMatch();
+    if (!yourTurnMatches?.length) setMatch() && setLoading(false);
     else if (index == -1) {
       setIndex(0);
     } else if (yourTurnMatches[index]) setMatch(yourTurnMatches[index]);
@@ -178,8 +178,7 @@ export const HomeProvider = (props) => {
 
   const sendMessage = async (match, message) => {
     setLoading(true);
-    const result = await api.sendMessage(match._id, message);
-    // const result = { sent_date: true };
+    await api.sendMessage(match._id, message);
     //remove match from yourturn
     setYourTurnMatches((prev) => prev.filter((m) => m._id != match?._id));
   };
@@ -338,7 +337,7 @@ export const HomeProvider = (props) => {
       profile.distance_mi
     } miles) away from each other. ${phoneString} ${instaString}\n`;
 
-    const style = `Text like a human and not like an AI assistant. Use informal language. Do NOT compliment, prefer short and witty messages. Be lighthearted and fun. Make sure it's NOT cringy. Do NOT talk about the pandemic. \n`;
+    const style = `Text like a human and not like an AI assistant. Use informal language. Do NOT compliment. Keep each message SHORT and WITTY. Be lighthearted and fun. Make sure it's NOT cringy. Do NOT talk about the pandemic. \n`;
 
     const opener = `${yourGender} ${language} ${style} You just matched with ${name} on Tinder. Send them a witty pick up line. Avoid compliments, use double entendres. ${
       interestString ?? bioString
@@ -381,8 +380,7 @@ export const HomeProvider = (props) => {
     const chatBody = {
       model: "gpt-3.5-turbo",
       messages: messagesGPT,
-      // temperature: 0.4,
-      top_p: 0.5,
+      temperature: 0.4,
       max_tokens: 400,
       stop: ["#", "^s*$"],
       logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100, 5540: -100 },
@@ -390,13 +388,22 @@ export const HomeProvider = (props) => {
 
     const msgObject = await api.generateMessage(chatBody);
 
-    const msg = msgObject.content;
+    const msg = processMessage(msgObject.content);
 
     setMessage(msg);
 
     if (autoChatting) await sendMessage(match, msg);
     setLoading(false);
     return msg;
+  };
+
+  const processMessage = (msg) => {
+    let split = msg.split("?")[0];
+    if (msg.includes("?")) {
+      split = split + "?";
+    }
+
+    return split;
   };
 
   return (

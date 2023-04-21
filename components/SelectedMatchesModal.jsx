@@ -33,8 +33,8 @@ export default function SelectedMatchesModal() {
       visible={showSelectedMatches}
       setVisible={setShowSelectedMatches}
     >
-      <div className="w-[400px]">
-        <div className="px-4 whitespace-pre-wrap text-white">
+      <div className="min-w-[200px]">
+        <div className="px-4 mt-4 whitespace-pre-wrap text-white">
           <p>
             Selected matches are highlighted in green and will be on the loop.
             Deselected matches will be skipped.

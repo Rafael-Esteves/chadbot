@@ -71,26 +71,25 @@ export default function Home() {
             label="Auto chat (beta)"
           />
         </div>
-        {!yourTurnMatches?.length ||
-          (!match && (
-            <div className="p-3 text-xl text-center my-5 text-white flex flex-col content-center">
-              {" "}
-              <p className="text-bold text-lg mb-5">
-                There are no convos at your turn or new matches to open. Get to
-                swipin 🔥
-              </p>
-              <Button
-                text="refresh"
-                action={() => {
-                  restart();
-                }}
-                visible={!autoChatting}
-                disabled={loading}
-              >
-                <ReloadIcon />
-              </Button>
-            </div>
-          ))}
+        {!yourTurnMatches?.length && !match && !loading && (
+          <div className="p-3 text-xl text-center my-5 text-white flex flex-col content-center">
+            {" "}
+            <p className="text-bold text-lg mb-5">
+              There are no convos at your turn or new matches to open. Get to
+              swipin 🔥
+            </p>
+            <Button
+              text="refresh"
+              action={() => {
+                restart();
+              }}
+              visible={!autoChatting}
+              disabled={loading}
+            >
+              <ReloadIcon />
+            </Button>
+          </div>
+        )}
         <MatchCard />
       </div>
     </div>

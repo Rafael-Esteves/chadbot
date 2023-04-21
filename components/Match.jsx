@@ -29,7 +29,7 @@ export default function Match({ selected, setShowSelectedMatches, match }) {
           />
         </div>
         <div className="flex items-center text-emerald-600">
-          <div>{match.person.name.split(" ")[0]}</div>
+          <div>{match.person.name}</div>
         </div>
       </div>
       <button
@@ -37,7 +37,7 @@ export default function Match({ selected, setShowSelectedMatches, match }) {
           setMatch(match);
           setShowSelectedMatches(false);
         }}
-        className="h-full align-middle items-center flex self-center ml-auto w-1/4 uppercase text-sm bg-slate-500 hover:bg-slate-600"
+        className="h-full align-middle items-center flex self-center ml-auto  uppercase text-sm bg-slate-500 hover:bg-slate-600 p-2"
       >
         Generate message
       </button>
