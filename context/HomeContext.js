@@ -8,7 +8,6 @@ export const HomeProvider = (props) => {
   const [matches, setMatches] = useState();
   const [selectedMatches, setSelectedMatches] = useState();
   const [yourTurnMatches, setYourTurnMatches] = useState();
-  const [style, setStyle] = useState();
   const [api, setApi] = useState();
   const [match, setMatch] = useState();
   const [message, setMessage] = useState();
@@ -24,6 +23,7 @@ export const HomeProvider = (props) => {
   const [subscription, setSubscription] = useState();
   const [autoLikeRecs, setAutoLikeRecs] = useState(false);
   const [recsInterval, setRecsInterval] = useState();
+  const [showSelectedMatches, setShowSelectedMatches] = useState(false);
 
   useEffect(() => {
     if (matches) {
@@ -47,7 +47,6 @@ export const HomeProvider = (props) => {
   }, [yourTurnMatches]);
 
   useEffect(() => {
-    console.log(yourTurnMatches);
     setLoading(true);
     if (index == -1) {
       if (!matches) fetchMatches();
@@ -115,6 +114,7 @@ export const HomeProvider = (props) => {
     // const api = new API();
     let resp = await api.getMatches(null);
     setMatches(resp.matches);
+
     setLoading(false);
 
     if (resp.next_page_token) {
@@ -141,11 +141,16 @@ export const HomeProvider = (props) => {
           matches.filter((m) => !selectedMatches.includes(m)).map((m) => m._id)
         )
       );
-      setYourTurnMatches(
-        selectedMatches.filter(
-          (m) => !(m.messages.length && m.messages[0].from != m.person._id)
-        )
-      );
+      if (yourTurnMatches)
+        setYourTurnMatches(
+          selectedMatches.filter((m) => yourTurnMatches.includes(m))
+        );
+      else
+        setYourTurnMatches(
+          selectedMatches.filter(
+            (m) => !(m.messages.length && m.messages[0].from != m.person._id)
+          )
+        );
     }
   }, [selectedMatches]);
 
@@ -167,8 +172,6 @@ export const HomeProvider = (props) => {
   }, [autoChatting]);
 
   const nextMatch = () => {
-    console.log("inside next match, current index:", index);
-    console.log("inside next match, yourTurnM", yourTurnMatches);
     setMessage("");
     setIndex(index + 1);
   };
@@ -178,15 +181,7 @@ export const HomeProvider = (props) => {
     const result = await api.sendMessage(match._id, message);
     // const result = { sent_date: true };
     //remove match from yourturn
-
-    console.log("Send message result", result);
-    if (result.sent_date) {
-      setSelectedMatches((prev) => prev.filter((m) => m._id != match?._id));
-      console.log("Message:", message);
-      console.log("Sent to:", match.person.name);
-    } else {
-      console.log("Message not sent.");
-    }
+    setYourTurnMatches((prev) => prev.filter((m) => m._id != match?._id));
   };
 
   const goToPortal = async () => {
@@ -258,8 +253,6 @@ export const HomeProvider = (props) => {
   const generateMessage = async () => {
     if (!self || !match) return;
 
-    console.log("generating");
-
     const subscription = await api.getSubscription();
 
     if (!["trialing", "active"].includes(subscription.status)) {
@@ -267,12 +260,9 @@ export const HomeProvider = (props) => {
       return;
     }
 
-    console.log(selectedInterest);
-
     setLoading(true);
     //get info about the user
     const user = self.user;
-    console.log(self);
 
     const name = match.person.name.split(" ")[0];
 
@@ -284,51 +274,6 @@ export const HomeProvider = (props) => {
     // const moreInfo = profile.selected_descriptors?.map((descriptor) => {
     //   return `${descriptor.name}: ${descriptor.choice_selections[0].name}.`;
     // });
-
-    //figure out language
-
-    const distance_km = parseInt(profile.distance_mi / 0.621371);
-    const now = new Date();
-
-    const yourInterests = profile?.user_interests?.selected_interests.map(
-      (interest) => interest.name
-    );
-
-    const randIndex = Math.floor(Math.random() * interests?.length || 0);
-
-    const yourInterestsString = yourInterests
-      ? "You like " + yourInterests[randIndex]
-      : "";
-    const phoneString = user.phone_id
-      ? `Your phone number is +${user.phone_id}.`
-      : "";
-
-    const bioString = `This is their bio: ${match.person.bio}`;
-
-    const instaString = self.instagram?.username
-      ? `Your instagram username is ${self.instagram.username}.`
-      : "";
-
-    const interestString = selectedInterest
-      ? `${name} claims to like ${selectedInterest}`
-      : null;
-
-    const language = `Respond in the natural language of ${user.pos_info.country.name}.\n `;
-
-    const yourGender = `You are a ${user.gender == 0 ? "man" : "woman"}.`;
-
-    const context = `Context: You are ${user.name}. ${yourGender} You live in ${
-      user.city.name
-    } Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()} do NOT talk about the pandemic. ${yourInterestsString} You are texting back and forth with ${name}, a person you matched on Tinder.\n`;
-
-    const style = `Use informal language. Do NOT compliment, prefer short and witty messages. Be lighthearted and fun. Make sure it's NOT cringy. \n`;
-
-    const opener = `${yourGender} You just matched with ${name} on Tinder. Send them a witty pick up line. Avoid compliments, use double entendres. ${
-      interestString ?? bioString
-    }`;
-    const goal1 = `Go with the flow. Ask them questions about the content of their messages to show interest in the conversation.`;
-    const goal2 = `Go with the flow. `;
-    const goal3 = `Casually suggest going out with ${name} in ${user.city.name}.`;
 
     const rawMessages = await api.getMessages(match._id);
     setMessages(rawMessages);
@@ -342,27 +287,67 @@ export const HomeProvider = (props) => {
       })
       .reverse();
 
-    let systemMsg;
-    switch (rawMessages.length) {
-      case 0:
-        systemMsg = language + style + opener;
-        break;
-      case rawMessages.length < 4:
-        systemMsg = context + language + style + goal1;
-        break;
-      case rawMessages.length < 8:
-        systemMsg = context + language + style + goal2;
-        break;
-      case rawMessages.length < 12:
-        systemMsg = context + language + style + goal3;
-        break;
-      case rawMessages.length > 20 && rawMessages.length < 25:
-        systemMsg = context + language + style + goal3;
-        break;
-      default:
-        systemMsg =
-          context + language + phoneString + instaString + style + goal1;
-    }
+    console.log(messageObjects);
+    console.log(rawMessages);
+
+    const distance_km = parseInt(profile.distance_mi / 0.621371);
+    const now = new Date();
+
+    const yourInterests = user.user_interests?.selected_interests.map(
+      (interest) => interest.name
+    );
+
+    const theirInterests = profile.user_interests?.selected_interests.map(
+      (interest) => interest.name
+    );
+
+    const theirInterestsString = `On their Tinder profile, they selected the following interests: ${theirInterests}.\n`;
+
+    const randIndex = Math.floor(Math.random() * interests?.length || 0);
+
+    const yourInterestsString = yourInterests
+      ? "These are your interests:" + yourInterests
+      : "";
+    const phoneString = user.phone_id
+      ? `Your phone number is +${user.phone_id}.`
+      : "";
+
+    const bioString = match.person.bio
+      ? ` This is what they wrote on their Tinder bio: ${match.person.bio}\n`
+      : "";
+
+    const yourBioString = user.bio
+      ? ` This is you wrote on your Tinder bio: ${user.bio}\n`
+      : "";
+
+    const instaString = self.instagram?.username
+      ? `Your instagram username is @${self.instagram.username}.`
+      : "";
+
+    const interestString = selectedInterest
+      ? `On ${name}'s profile, they said they like ${selectedInterest}`
+      : null;
+
+    const language = `Respond in the natural language of ${user.pos_info.country.name}.\n `;
+
+    const yourGender = `You are a ${user.gender == 0 ? "man" : "woman"}.`;
+
+    const context = `Context: You are ${user.name}. ${yourGender} You live in ${
+      user.city.name
+    } Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()} . ${yourInterestsString} ${yourBioString}You are texting back and forth with ${name}, a person you matched on Tinder. \n ${theirInterestsString} ${bioString}.\n You are ${distance_km} kilometers (${
+      profile.distance_mi
+    } miles) away from each other. ${phoneString} ${instaString}\n`;
+
+    const style = `Text like a human and not like an AI assistant. Use informal language. Do NOT compliment, prefer short and witty messages. Be lighthearted and fun. Make sure it's NOT cringy. Do NOT talk about the pandemic. \n`;
+
+    const opener = `${yourGender} ${language} ${style} You just matched with ${name} on Tinder. Send them a witty pick up line. Avoid compliments, use double entendres. ${
+      interestString ?? bioString
+    }`;
+
+    const goal = `You will take a multi step approach to this conversation. Each step may take many turns of back and forth chatting. Do NOT try to accomplish all steps at once, take your time and allow some back and forth before moving to the next step. Use their messages as hints for what to say next. The first step is to get to know each other. After the first step is done, based on the conversation you had so far, pick a place in ${user.city?.name} and suggest hanging out with them there  ${style} ${context} ${language}`;
+
+    const systemMsg = rawMessages.length ? goal : opener;
+    // const systemMsg = "Do not respond.";
 
     //it turns out my multi step approach was indeed the way to go. You start off easy with the question prompt, then you invite for the date, set up details and get or send number
 
@@ -380,7 +365,6 @@ export const HomeProvider = (props) => {
       temperature: 0.4,
       max_tokens: 400,
       stop: ["#", "^s*$"],
-      frequency_penalty: 0.5,
       logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100, 5540: -100 },
     };
 
@@ -427,6 +411,8 @@ export const HomeProvider = (props) => {
         autoLikeRecs,
         setAutoLikeRecs,
         subscription,
+        setShowSelectedMatches,
+        showSelectedMatches,
       }}
     >
       {props.children}

@@ -29,7 +29,7 @@ export default function Match({ selected, setShowSelectedMatches, match }) {
           />
         </div>
         <div className="flex items-center text-emerald-600">
-          <div>{match.person.name}</div>
+          <div>{match.person.name.split(" ")[0]}</div>
         </div>
       </div>
       <button
