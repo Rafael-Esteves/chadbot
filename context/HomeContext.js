@@ -388,7 +388,7 @@ export const HomeProvider = (props) => {
 
     const msgObject = await api.generateMessage(chatBody);
 
-    const msg = processMessage(msgObject.content);
+    const msg = msgObject.content;
 
     setMessage(msg);
 
