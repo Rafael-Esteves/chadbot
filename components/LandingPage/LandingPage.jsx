@@ -89,7 +89,7 @@ const LandingPage = () => {
         </p>
       </div>
       <div className="lg:w-1/2 text-white flex flex-col justify-center items-center p-10 bg-gradient-to-br from-orange-500 to-rose-500">
-        <h2 className="text-3xl font-bold mb-5">Log In with Tinder</h2>
+        <h2 className="text-3xl font-bold mb-5">Login with Tinder</h2>
         <div className="mb-5 p-8 h-28 w-28 shadow-inner rounded-full overflow-hidden bg-white flex items-center justify-content-center">
           <img src="/images/tinder-logo.png" alt="tinder logo" />
         </div>
