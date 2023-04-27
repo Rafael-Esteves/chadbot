@@ -72,10 +72,11 @@ const LandingPage = () => {
           on <b>Tinder</b>.
         </p>
         <p className="text-white text-right mt-10 lg:max-w-lg text-2xl">
-          It takes into consideration your own profile information and that of
-          your matches to generate
-          <b className=" text-emerald-300"> tailored messages</b> and keep your
-          conversations going smoothly.
+          It uses as context your own profile information as well as that of
+          your matches to generate messages that are
+          <b className=" text-emerald-300"> tailored</b> for each one of the
+          conversations and keep them going{" "}
+          <b className="text-emerald-300">efortlessly</b>.
         </p>
         <p className="text-white text-left mt-10 lg:max-w-lg text-2xl">
           It will even{" "}
