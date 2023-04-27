@@ -8,7 +8,7 @@ export default function TextInput({ labelText, onChange, value, autoFocus }) {
         onChange={(e) => {
           onChange(e);
         }}
-        className={`text-white peer h-full w-full rounded-[7px] border border-slate-200 bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-white-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-white-200 ${
+        className={`text-white peer h-full w-full rounded-[7px] border border-slate-200 bg-slate-900 px-3 py-2.5 font-sans text-sm font-normal text-white-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-white-200 ${
           value ? "outline-0 border-t-transparent " : ""
         }placeholder-shown:border-t-white-200 focus:border-2 focus:border-emerald-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-white-50`}
         placeholder=" "
