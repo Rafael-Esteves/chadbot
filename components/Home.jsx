@@ -56,7 +56,7 @@ export default function Home() {
           />
         </div>
 
-        <h2 className="p-3 text-xl my-2 text-white">
+        {/* <h2 className="p-3 text-xl my-2 text-white">
           Toggle auto chat to automatically respond to ongoing conversations and
           open new matches every 5 minutes. (Do not close this tab)
         </h2>
@@ -70,7 +70,7 @@ export default function Home() {
             }}
             label="Auto chat (beta)"
           />
-        </div>
+        </div> */}
         {!yourTurnMatches?.length && !match && !loading && (
           <div className="p-3 text-xl text-center my-5 text-white flex flex-col content-center">
             {" "}
@@ -90,7 +90,9 @@ export default function Home() {
             </Button>
           </div>
         )}
-        <MatchCard />
+        <div className="my-5">
+          <MatchCard />
+        </div>
       </div>
     </div>
   );

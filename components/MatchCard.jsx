@@ -35,21 +35,32 @@ export default function MatchCard() {
         </div>
 
         <div className="text-xl my-5 text-white">{match.person.name}</div>
-        <div
-          className={`flex overflow-auto no-scrollbar text-white h-40 mb-5  flex-col`}
-        >
-          {!loading && messages?.length > 0 && (
-            <div className="flex flex-col-reverse h-40 overflow-auto no-scrollbar">
+
+        {!loading && messages?.length > 0 && (
+          <div>
+            <p className="text-slate-400">Scroll to read older messages</p>
+            <div className="flex text-white p-2 rounded-md bg-slate-900 flex-col-reverse h-40 overflow-auto no-scrollbar">
               {messages?.map((msg) => {
                 return <Bubble msg={msg} key={msg._id}></Bubble>;
               })}
             </div>
-          )}
+          </div>
+        )}
 
-          {!loading && !messages?.length && interests?.length > 0 && (
-            <>
-              <div className="h2">
-                Click one of the interests to generate a targeted opener.
+        {!loading &&
+          !messages?.length &&
+          (interests?.length > 0 || match.person.bio) && (
+            <div className="text-white">
+              <div className="text-slate-400 w-full text-left  flex items-center justify-center align-center flex-row">
+                <div className="md:max-w-xl text-center">
+                  <p>
+                    Click one of the interests to generate a targeted opener.
+                  </p>
+                  <p>
+                    If no interest is selected, the opener will be generated
+                    based on their bio.
+                  </p>
+                </div>
               </div>
               <div className="flex flex-row flex-wrap justify-center items-center my-4">
                 {interests?.map((i) => {
@@ -80,16 +91,18 @@ export default function MatchCard() {
                     );
                 })}
               </div>
-            </>
+              {!loading && match.person.bio && !messages?.length && (
+                <div
+                  dangerouslySetInnerHTML={{ __html: match.person.bio }}
+                ></div>
+              )}
+            </div>
           )}
-          {!loading && match.person.bio && !messages?.length && (
-            <div dangerouslySetInnerHTML={{ __html: match.person.bio }}></div>
-          )}
-        </div>
+
         <textarea
           className={`${
             loading || autoChatting ? "opacity-50" : ""
-          } text-xl mb-5 block p-2.5 w-full rounded-lg border border-gray-300 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500 bg-slate-700 text-white`}
+          } text-xl mb-5 block p-2.5 w-full rounded-lg   outline-0 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500 bg-slate-900 text-white mt-5`}
           value={message}
           onChange={(e) => {
             setMessage(e.target.value);
