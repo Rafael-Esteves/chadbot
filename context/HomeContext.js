@@ -24,6 +24,7 @@ export const HomeProvider = (props) => {
   const [autoLikeRecs, setAutoLikeRecs] = useState(false);
   const [recsInterval, setRecsInterval] = useState();
   const [showSelectedMatches, setShowSelectedMatches] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   useEffect(() => {
     if (matches) {
@@ -442,6 +443,8 @@ export const HomeProvider = (props) => {
         subscription,
         setShowSelectedMatches,
         showSelectedMatches,
+        showInfoModal,
+        setShowInfoModal,
       }}
     >
       {props.children}

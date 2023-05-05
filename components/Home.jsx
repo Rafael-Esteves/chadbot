@@ -10,6 +10,9 @@ import ListIcon from "./svg/ListIcon";
 import Switch from "./Switch";
 import ReloadIcon from "./svg/ReloadIcon";
 import SelectedMatchesModal from "./SelectedMatchesModal";
+import InfoModal from "./InfoModal";
+import InfoIcon from "./svg/InfoIcon";
+import LockOpenIcon from "./svg/LockOpenIcon";
 
 export default function Home() {
   const {
@@ -23,6 +26,7 @@ export default function Home() {
     match,
     loading,
     setShowSelectedMatches,
+    setShowInfoModal,
   } = useContext(HomeContext);
 
   return (
@@ -30,6 +34,7 @@ export default function Home() {
       <TrialExpiredModal />
       <LockedFeatureModal />
       <SelectedMatchesModal />
+      <InfoModal />
 
       <div className="flex flex-col p-10  min-h-screen">
         <div className=" flex md:flex-row flex-col justify-between">
@@ -41,6 +46,7 @@ export default function Home() {
               `Selected Matches: ` + selectedMatches?.length ?? "loading..."
             }
             iconFirst={true}
+            color="violet"
           >
             <ListIcon />
           </Button>
@@ -53,15 +59,24 @@ export default function Home() {
             action={() => {
               goToPortal();
             }}
-          />
+            iconFirst={true}
+            color="violet"
+          >
+            <LockOpenIcon />
+          </Button>
+          <Button
+            text="Info"
+            action={() => {
+              setShowInfoModal((prev) => !prev);
+            }}
+            iconFirst={true}
+            color="violet"
+          >
+            <InfoIcon />
+          </Button>
         </div>
 
-        <h2 className="p-3 text-xl my-2 text-white">
-          Toggle auto chat to automatically respond to ongoing conversations and
-          open new matches every 5 minutes. (Do not close this tab)
-        </h2>
-
-        <div className="my-5 flex justify-center">
+        <div className="mt-10 mb-4 flex justify-center">
           <Switch
             id="flexSwitchCheckDefault"
             checked={autoChatting}
@@ -71,6 +86,7 @@ export default function Home() {
             label="Auto chat"
           />
         </div>
+
         {!yourTurnMatches?.length && !match && !loading && (
           <div className="p-3 text-xl text-center my-5 text-white flex flex-col content-center">
             {" "}
