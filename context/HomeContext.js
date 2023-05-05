@@ -341,7 +341,7 @@ export const HomeProvider = (props) => {
 
     const opener = `Start the conversation with ${name} by sending the first text.`;
 
-    const reply = `Send a reply to ${name}. You should be exploratory and show interest for the subjects that are being talked about. You MAY reference subjects previously mentioned in the conversation.`;
+    const reply = `The messages should be exploratory and reference previous topics and messages. Show that you are interested in knowing more about how ${name} relates to the topics, and remember this is a dating app.`;
 
     const systemMsg = rawMessages.length ? context + reply : context + opener;
     // const systemMsg = "Do not respond.";
@@ -380,7 +380,7 @@ export const HomeProvider = (props) => {
       messages: messagesGPT,
       temperature: 0.4,
       max_tokens: 400,
-      stop: ["#", "^s*$", user.name],
+      stop: ["#", "^s*$"],
       logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100, 5540: -100 },
       presence_penalty: -0.5,
     };
@@ -389,7 +389,11 @@ export const HomeProvider = (props) => {
 
     console.log("Pre processed:", msgObject.content);
 
-    const msg = processMessage(msgObject.content);
+    const msg = autoChatting
+      ? processMessage(msgObject.content)
+      : msgObject.content;
+
+    console.log(msgObject.content);
 
     setMessage(msg);
 
