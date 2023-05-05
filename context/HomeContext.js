@@ -226,7 +226,7 @@ export const HomeProvider = (props) => {
         const randIndex = Math.floor(Math.random() * interests?.length || 0);
         const interest = interests ? interests[randIndex] : null;
 
-        setSelectedInterest(interest);
+        // setSelectedInterest(interest);
       };
       matchEffect();
     } else {
@@ -286,15 +286,37 @@ export const HomeProvider = (props) => {
       })
       .reverse();
 
-    console.log(messageObjects);
-    console.log(rawMessages);
-
     const distance_km = parseInt(profile.distance_mi / 0.621371);
     const now = new Date();
+
+    //You
 
     const yourInterests = user.user_interests?.selected_interests.map(
       (interest) => interest.name
     );
+
+    const yourInterestsString = yourInterests
+      ? "These are the interests you selected on your Tinder profile: " +
+        yourInterests
+      : "";
+
+    const yourBioString = user.bio
+      ? ` This is you wrote on your Tinder bio: ${user.bio}\n`
+      : "";
+
+    const phoneString = user.phone_id
+      ? `Your phone number is +${user.phone_id}.`
+      : "You can't give your phone number right now.";
+
+    const instaString = self.instagram?.username
+      ? `Your instagram username is @${self.instagram.username}.`
+      : "You do not have an instagram account.";
+
+    const yourGender = `You are a ${user.gender == 0 ? "man" : "woman"}.`;
+
+    const yourCityString = user.city ? `You live in ${user.city.name}` : "";
+
+    //Them
 
     const theirInterests = profile.user_interests?.selected_interests.map(
       (interest) => interest.name
@@ -302,50 +324,25 @@ export const HomeProvider = (props) => {
 
     const theirInterestsString = `On their Tinder profile, they selected the following interests: ${theirInterests}.\n`;
 
-    const randIndex = Math.floor(Math.random() * interests?.length || 0);
-
-    const yourInterestsString = yourInterests
-      ? "These are your interests:" + yourInterests
-      : "";
-    const phoneString = user.phone_id
-      ? `Your phone number is +${user.phone_id}.`
-      : "";
-
-    const bioString = match.person.bio
+    const theirBioString = match.person.bio
       ? ` This is what they wrote on their Tinder bio: ${match.person.bio}\n`
       : "";
 
-    const yourBioString = user.bio
-      ? ` This is you wrote on your Tinder bio: ${user.bio}\n`
-      : "";
+    console.log(user.pos_info);
 
-    const instaString = self.instagram?.username
-      ? `Your instagram username is @${self.instagram.username}.`
-      : "";
-
-    const interestString = selectedInterest
-      ? `On ${name}'s profile, they said they like ${selectedInterest}`
-      : null;
-
-    const language = `Respond in the natural language of ${user.pos_info.country.name}.\n `;
-
-    const yourGender = `You are a ${user.gender == 0 ? "man" : "woman"}.`;
-
-    const context = `Context: You are ${user.name}. ${yourGender} You live in ${
-      user.city.name
-    } Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()} . ${yourInterestsString} ${yourBioString}You are texting back and forth with ${name}, a person you matched on Tinder. \n ${theirInterestsString} ${bioString}.\n You are ${distance_km} kilometers (${
+    const context = ` Context: You are ${
+      user.name
+    }. ${yourGender} ${yourCityString} Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()} . ${yourInterestsString} ${yourBioString} You are texting with ${name} on Tinder. \n ${theirInterestsString} ${theirBioString}.\n You are ${distance_km} kilometers (${
       profile.distance_mi
-    } miles) away from each other. ${phoneString} ${instaString}\n`;
+    } miles) away from each other. ${phoneString} ${instaString}\n Respond in the natural language of ${
+      user.pos_info.country.name
+    }.\n Text like a human would. Use informal language. Do NOT compliment. Your messages should be as short as possible. Do NOT talk about the pandemic. You are NOT an AI assistant. Reply ONLY with the content of text message to be sent. \n`;
 
-    const style = `Text like a human and not like an AI assistant. Use informal language. Do NOT compliment. Keep each message SHORT and WITTY. Be lighthearted and fun. Make sure it's NOT cringy. Do NOT talk about the pandemic. \n`;
+    const opener = `Start the conversation with ${name} by sending the first text.`;
 
-    const opener = `${yourGender} ${language} ${style} You just matched with ${name} on Tinder. Send them a witty pick up line. Avoid compliments, use double entendres. ${
-      interestString ?? bioString
-    }`;
+    const reply = `Send a reply to ${name}. You should be exploratory and show interest for the subjects that are being talked about. You MAY reference subjects previously mentioned in the conversation.`;
 
-    const goal = `You will take a multi step approach to this conversation. Each step may take many turns of back and forth chatting. Do NOT try to accomplish all steps at once, take your time and allow some back and forth before moving to the next step. Use their messages as hints for what to say next. The first step is to get to know each other. After the first step is done, based on the conversation you had so far, pick a place in ${user.city?.name} and suggest hanging out with them there  ${style} ${context} ${language}`;
-
-    const systemMsg = rawMessages.length ? goal : opener;
+    const systemMsg = rawMessages.length ? context + reply : context + opener;
     // const systemMsg = "Do not respond.";
 
     //it turns out my multi step approach was indeed the way to go. You start off easy with the question prompt, then you invite for the date, set up details and get or send number
@@ -382,13 +379,16 @@ export const HomeProvider = (props) => {
       messages: messagesGPT,
       temperature: 0.4,
       max_tokens: 400,
-      stop: ["#", "^s*$"],
+      stop: ["#", "^s*$", user.name],
       logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100, 5540: -100 },
+      presence_penalty: -0.5,
     };
 
     const msgObject = await api.generateMessage(chatBody);
 
-    const msg = msgObject.content;
+    console.log("Pre processed:", msgObject.content);
+
+    const msg = processMessage(msgObject.content);
 
     setMessage(msg);
 

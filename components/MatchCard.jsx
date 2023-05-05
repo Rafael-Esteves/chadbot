@@ -51,7 +51,7 @@ export default function MatchCard() {
           !messages?.length &&
           (interests?.length > 0 || match.person.bio) && (
             <div className="text-white">
-              <div className="text-slate-400 w-full text-left  flex items-center justify-center align-center flex-row">
+              {/* <div className="text-slate-400 w-full text-left  flex items-center justify-center align-center flex-row">
                 <div className="md:max-w-xl text-center">
                   <p>
                     Click one of the interests to generate a targeted opener.
@@ -61,7 +61,7 @@ export default function MatchCard() {
                     based on their bio.
                   </p>
                 </div>
-              </div>
+              </div> */}
               <div className="flex flex-row flex-wrap justify-center items-center my-4">
                 {interests?.map((i) => {
                   if (i == selectedInterest)
@@ -69,7 +69,7 @@ export default function MatchCard() {
                       <div
                         key={i}
                         onClick={(e) => {
-                          !autoChatting && setSelectedInterest(false);
+                          // !autoChatting && setSelectedInterest(false);
                         }}
                         className="px-5 h-min py-2 mx-1 border my-1 border-emerald-300 rounded-3xl cursor-pointer"
                       >
@@ -81,10 +81,10 @@ export default function MatchCard() {
                       <div
                         key={i}
                         onClick={(e) => {
-                          if (!autoChatting)
-                            setSelectedInterest(e.target.innerHTML);
+                          // if (!autoChatting)
+                          //   setSelectedInterest(e.target.innerHTML);
                         }}
-                        className="px-5 h-min py-2 border mx-1 my-1 border-slate-300 rounded-3xl cursor-pointer"
+                        className="px-5 h-min py-2 border mx-1 my-1 border-slate-300 rounded-3xl"
                       >
                         {i}
                       </div>
