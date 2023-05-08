@@ -10,22 +10,6 @@ export default function Base(props) {
         <meta name="description" content="More dates and more time" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.webp" />
-        <Script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=G-VHSDRCCSDG`}
-        ></Script>
-        <Script
-          dangerouslySetInnerHTML={{
-            __html: `
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-VHSDRCCSDG', {
-          page_path: window.location.pathname,
-        });
-      `,
-          }}
-        />
       </Head>
       <main
         className={
@@ -34,6 +18,23 @@ export default function Base(props) {
       >
         <HomeProvider>{props.children}</HomeProvider>
       </main>
+      <Script
+        async
+        src={`https://www.googletagmanager.com/gtag/js?id=G-VHSDRCCSDG`}
+      ></Script>
+      <Script
+        id="google-analytics"
+        dangerouslySetInnerHTML={{
+          __html: `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-VHSDRCCSDG', {
+          page_path: window.location.pathname,
+        });
+      `,
+        }}
+      />
     </>
   );
 }
