@@ -261,6 +261,15 @@ export const HomeProvider = (props) => {
     }
 
     setLoading(true);
+
+    const rawMessages = await api.getMessages(match._id);
+    setMessages(rawMessages);
+
+    if (rawMessages.length > 40) {
+      !autoChatting && setLoading(false);
+      return;
+    }
+
     //get info about the user
     const user = self.user;
 
@@ -274,9 +283,6 @@ export const HomeProvider = (props) => {
     // const moreInfo = profile.selected_descriptors?.map((descriptor) => {
     //   return `${descriptor.name}: ${descriptor.choice_selections[0].name}.`;
     // });
-
-    const rawMessages = await api.getMessages(match._id);
-    setMessages(rawMessages);
 
     const messageObjects = rawMessages
       .map((msg) => {
@@ -313,9 +319,11 @@ export const HomeProvider = (props) => {
       ? `Your instagram username is @${self.instagram.username}.`
       : "You do not have an instagram account.";
 
-    const yourGender = `You are a ${user.gender == 0 ? "man" : "woman"}.`;
+    const yourGender = `You are a ${user.gender == 0 ? "MALE" : "FEMALE"}.`;
 
     const yourCityString = user.city ? `You live in ${user.city.name}` : "";
+
+    console.log(yourGender);
 
     //Them
 
@@ -337,11 +345,11 @@ export const HomeProvider = (props) => {
       profile.distance_mi
     } miles) away from each other. ${phoneString} ${instaString}\n Respond in the natural language of ${
       user.pos_info.country.name
-    }.\n Text like a human would. Use informal language. Do NOT compliment. Your messages should be as short as possible. Do NOT talk about the pandemic. You are NOT an AI assistant. Reply ONLY with the content of text message to be sent. \n`;
+    }.\n Text like a human would. Use informal language. Do NOT compliment. Reply with only ONE sentence. Do NOT talk about the pandemic. You are NOT an AI assistant. Reply ONLY with the content of text message to be sent.  \n`;
 
-    const opener = `Start the conversation with ${name} by sending the first text.`;
+    const opener = `Send the first text`;
 
-    const reply = `The messages should be exploratory and reference previous topics and messages. Show that you are interested in knowing more about how ${name} relates to the topics, and remember this is a dating app.`;
+    const reply = `Send your reply.`;
 
     const systemMsg = rawMessages.length ? context + reply : context + opener;
     // const systemMsg = "Do not respond.";
