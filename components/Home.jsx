@@ -13,6 +13,7 @@ import SelectedMatchesModal from "./SelectedMatchesModal";
 import InfoModal from "./InfoModal";
 import InfoIcon from "./svg/InfoIcon";
 import LockOpenIcon from "./svg/LockOpenIcon";
+import useTranslation from "next-translate/useTranslation";
 
 export default function Home() {
   const {
@@ -29,6 +30,8 @@ export default function Home() {
     setShowInfoModal,
   } = useContext(HomeContext);
 
+  const { t } = useTranslation("main");
+
   return (
     <div className="md:w-3/4 w-full">
       <TrialExpiredModal />
@@ -43,7 +46,8 @@ export default function Home() {
               setShowSelectedMatches((prev) => !prev);
             }}
             text={
-              `Selected Matches: ` + selectedMatches?.length ?? "loading..."
+              t("selected_matches") + " " + selectedMatches?.length ??
+              "loading..."
             }
             iconFirst={true}
             color="violet"
@@ -51,7 +55,7 @@ export default function Home() {
             <ListIcon />
           </Button>
           <Button
-            text="Manage subscription"
+            text={t("manage_subscription")}
             visible={
               typeof subscription != "undefined" &&
               subscription.status != "trialing"
@@ -65,9 +69,21 @@ export default function Home() {
             <LockOpenIcon />
           </Button>
           <Button
-            text="Info"
+            text={t("info")}
             action={() => {
               setShowInfoModal((prev) => !prev);
+            }}
+            iconFirst={true}
+            color="violet"
+          >
+            <InfoIcon />
+          </Button>
+          <Button
+            text={t("logout")}
+            action={() => {
+              localStorage.removeItem("tinder_api_key");
+              localStorage.removeItem("customer_id");
+              window.location.href = "/";
             }}
             iconFirst={true}
             color="violet"
@@ -83,19 +99,16 @@ export default function Home() {
             action={() => {
               setAutoChatting(!autoChatting);
             }}
-            label="Auto chat"
+            label={t("auto_chat")}
           />
         </div>
 
         {!yourTurnMatches?.length && !match && !loading && (
           <div className="p-3 text-xl text-center my-5 text-white flex flex-col content-center">
             {" "}
-            <p className="text-bold text-lg mb-5">
-              There are no convos at your turn or new matches to open. Get to
-              swipin 🔥
-            </p>
+            <p className="text-bold text-lg mb-5">{t("no_conversations")}</p>
             <Button
-              text="refresh"
+              text={t("refresh")}
               action={() => {
                 restart();
               }}

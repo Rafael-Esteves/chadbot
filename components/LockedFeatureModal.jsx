@@ -2,27 +2,28 @@ import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { HomeContext } from "@/context/HomeContext";
 import { useContext } from "react";
+import useTranslation from "next-translate/useTranslation";
 
 export default function LockedFeatureModal() {
   const { showLockedFeatureModal, setShowLockedFeatureModal, goToPortal } =
     useContext(HomeContext);
+
+  const { t } = useTranslation("main");
 
   return (
     <Modal
       visible={showLockedFeatureModal}
       title="Chadbot plus feature"
       positive={() => {
-        goToPortal()
+        goToPortal();
       }}
       positiveText="Add payment method"
       setVisible={setShowLockedFeatureModal}
     >
       <div className="text-white p-5">
-        <h2 className="text-xl mb-2">
-          Oops! Looks like this is a subscriber only feature.
-        </h2>
-        <p>To unlock all chadbot features, subscribe now for only $9/month.</p>
-        <p className="mb-3">You can cancel anytime!</p>
+        <h2 className="text-xl mb-2">{t("subscriber_only")}.</h2>
+        <p>{t("unlock_feature")}</p>
+        <p className="mb-3">{t("cancel_anytime")}</p>
       </div>
     </Modal>
   );

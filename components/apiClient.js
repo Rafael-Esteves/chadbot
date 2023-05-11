@@ -2,7 +2,7 @@ import axios from "axios";
 
 export class API {
   constructor() {
-    if (window.location.pathname != "/") {
+    if (window.location.pathname.includes("/main")) {
       if (
         localStorage.getItem("tinder_api_key") &&
         localStorage.getItem("customer_id")
@@ -13,25 +13,28 @@ export class API {
     } else {
       this.token = "";
     }
+    this.instance = axios.create({
+      baseURL: window.location.origin,
+    });
   }
 
   //stripe
   getCustomer = async (phone) => {
-    const response = await axios.post("/api/get-customer", {
+    const response = await this.instance.post("/api/get-customer", {
       phone: phone,
     });
     return response.data;
   };
 
   getSubscription = async () => {
-    const response = await axios.post("/api/get-subscription", {
+    const response = await this.instance.post("/api/get-subscription", {
       customer_id: this.customer_id,
     });
     return response.data;
   };
 
   getPortalUrl = async () => {
-    const response = await axios.post("/api/get-portal-url", {
+    const response = await this.instance.post("/api/get-portal-url", {
       customer_id: this.customer_id,
     });
     return response.data;
@@ -40,13 +43,13 @@ export class API {
   //pre auth
 
   sendSms = async (phone) => {
-    return await axios.post("/api/send-sms", {
+    return await this.instance.post("/api/send-sms", {
       phone: phone,
     });
   };
 
   getToken = async (code, phone) => {
-    const response = await axios.post("/api/get-token", {
+    const response = await this.instance.post("/api/get-token", {
       code: code,
       phone: phone,
     });
@@ -55,7 +58,7 @@ export class API {
 
   //after auth
   tinderReqAuth = async (path, body = {}) => {
-    const response = await axios
+    const response = await this.instance
       .post(path, {
         token: this.token,
         ...body,
@@ -128,7 +131,7 @@ export class API {
 
   //openAI
   generateMessage = async (chat_body) => {
-    const resp = await axios
+    const resp = await this.instance
       .post("api/generate-message", {
         chat_body: chat_body,
       })

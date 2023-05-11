@@ -1,0 +1,10 @@
+{
+  "welcome": "Welcome to Chadbot",
+  "description1": "Chadbot is a web app that uses ChatGPT to generate witty openers and creative replies to your matches on Tinder.",
+  "description2": "It uses as context your own profile information as well as that of your matches to generate messages that are tailored for each one of the conversations and keep them going effortlessly.",
+  "description3": "It will even pick exciting locations in your city and set up dates for you! Think of it as your personal AI wingman.",
+  "login_with": "Login with",
+  "send_code": "Send code",
+  "confirmation_code": "Confirmation code",
+  "login": "Login"
+}

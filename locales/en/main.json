@@ -1,0 +1,28 @@
+{
+  "selected_matches": "Selected matches",
+  "manage_subscription": "Manage subscription",
+  "info": "Info",
+  "logout" : "Logout",
+  "auto_chat": "Auto chat",
+  "no_conversations": "There are no convos at your turn or new matches to open. Get to swipin 🔥",
+  "refresh": "Refresh",
+
+  "older_messages": "Scroll to read older messages",
+  "new_message": "New message",
+  "skip_match": "Skip match",
+  "send_message": "Send message",
+
+  "trial_expired": "Oops! Looks like your trial expired.",
+  "continue_using": "To continue using Chadbot, subscribe for $9/month.",
+  "cancel_anytime": "You can cancel anytime!", 
+
+  "subscriber_only": "Oops! Looks like this is a subscriber only feature",
+  "unlock_feature":"To unlock all chadbot features, subscribe now for only $9/month.",
+
+  "selected_matches_description": "Selected matches are highlighted in green and will be on the loop. Deselected matches will be skipped.",
+  "select_all": "Select all",
+  "deselect_all": "Deselect all",
+
+  "generate_message": "Generate message"
+
+}

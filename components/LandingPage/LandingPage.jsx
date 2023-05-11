@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Router from "next/router";
 import Alert from "@/components/Alert";
 import { API } from "@/components/apiClient";
+import useTranslation from "next-translate/useTranslation";
 
 const LandingPage = () => {
   const [phone, setNumber] = useState("");
@@ -13,6 +14,8 @@ const LandingPage = () => {
 
   const [api, setApi] = useState();
   const [error, setError] = useState();
+
+  const { t } = useTranslation("common");
 
   useEffect(() => {
     if (error) {
@@ -62,40 +65,27 @@ const LandingPage = () => {
   return (
     <div className="bg-slate-800 min-h-screen flex flex-col-reverse lg:flex-row">
       <div className="lg:w-1/2 flex flex-col justify-center items-center p-10">
-        <h1 className="text-5xl text-white font-bold mb-10">
-          Welcome to <span className="text-emerald-300">Chadbot</span>
-        </h1>
+        <h1 className="text-5xl text-white font-bold mb-10">{t("welcome")}</h1>
         <p className="text-white text-left mt-10 lg:max-w-lg text-2xl">
-          Chadbot is a web app that uses <b>ChatGPT</b> to generate
-          <b className=" text-emerald-300"> witty openers</b> and
-          <b className=" text-emerald-300"> creative replies</b> to your matches
-          on <b>Tinder</b>.
+          {t("description1")}
         </p>
         <p className="text-white text-right mt-10 lg:max-w-lg text-2xl">
-          It uses as context your own profile information as well as that of
-          your matches to generate messages that are
-          <b className=" text-emerald-300"> tailored</b> for each one of the
-          conversations and keep them going{" "}
-          <b className="text-emerald-300">efortlessly</b>.
+          {t("description2")}
         </p>
         <p className="text-white text-left mt-10 lg:max-w-lg text-2xl">
-          It will even{" "}
-          <u>
-            pick exciting locations{" "}
-            <b className="text-emerald-300">in your city</b>
-          </u>{" "}
-          and <b className="text-emerald-300"> set up dates for you</b>! Think
-          of it as your personal AI wingman.
+          {t("description3")}
         </p>
       </div>
       <div className="lg:w-1/2 text-white flex flex-col justify-center items-center p-10 bg-gradient-to-br from-orange-500 to-rose-500">
-        <h2 className="text-3xl font-bold mb-5">Login with Tinder</h2>
+        <h2 className="text-3xl font-bold mb-5">{t("login_with")} Tinder</h2>
         <div className="mb-5 p-8 h-28 w-28 shadow-inner rounded-full overflow-hidden bg-white flex items-center justify-content-center">
           <img src="/images/tinder-logo.png" alt="tinder logo" />
         </div>
         <Alert message={error} type={"error"}></Alert>
         <div className=" bg-slate-800 text-left rounded-lg">
-          <h3 className={"pt-5 px-5 text-2xl text-white"}>Login with SMS</h3>
+          <h3 className={"pt-5 px-5 text-2xl text-white"}>
+            {t("login_with")} SMS
+          </h3>
 
           <div className={"grid space-y-2 md:space-y-0 md:flex p-5"}>
             <select
@@ -134,13 +124,15 @@ const LandingPage = () => {
               }`}
               onClick={() => sendSms()}
             >
-              Send code
+              {t("send_code")}
             </button>
           </div>
 
           {showCodeInput && (
             <div className={" p-5 text-left"}>
-              <h3 className="text-white text-2xl mb-5">Confirmation code</h3>
+              <h3 className="text-white text-2xl mb-5">
+                {t("confirmation_code")}
+              </h3>
               <div className="flex items-stretch w-full">
                 <input
                   className={"bg-slate-900 p-3 w-full outline-0"}
@@ -158,7 +150,7 @@ const LandingPage = () => {
                   }`}
                   onClick={() => getToken()}
                 >
-                  Login
+                  {t("login")}
                 </button>
               </div>
             </div>

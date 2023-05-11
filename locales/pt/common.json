@@ -1,0 +1,10 @@
+{
+"welcome": "Bem-vindo ao Chadbot",
+"description1": "O Chadbot é um aplicativo da web que usa o ChatGPT para gerar abridores inteligentes e respostas criativas para seus matches no Tinder.",
+"description2": "Ele usa como contexto suas próprias informações de perfil, bem como as de seus matches, para gerar mensagens personalizadas para cada uma das conversas e mantê-las fluindo sem esforço.",
+"description3": "Ele até escolherá locais emocionantes em sua cidade e marcará encontros para você! Pense nele como seu companheiro pessoal de IA.",
+"login_with": "Entrar com",
+"send_code": "Enviar código",
+"confirmation_code": "Código de confirmação",
+"login": "Entrar"
+}

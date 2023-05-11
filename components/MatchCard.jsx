@@ -5,6 +5,7 @@ import Button from "./Button";
 import ReloadIcon from "./svg/ReloadIcon";
 import ForwardIcon from "./svg/ForwardIcon";
 import SendIcon from "./svg/SendIcon";
+import useTranslation from "next-translate/useTranslation";
 
 export default function MatchCard() {
   const {
@@ -22,6 +23,8 @@ export default function MatchCard() {
     setSelectedInterest,
     yourTurnMatches,
   } = useContext(HomeContext);
+  const { t } = useTranslation("main");
+
   return (
     match &&
     yourTurnMatches && (
@@ -38,7 +41,7 @@ export default function MatchCard() {
 
         {!loading && messages?.length > 0 && (
           <div>
-            <p className="text-slate-400">Scroll to read older messages</p>
+            <p className="text-slate-400">{t("older_messages")}</p>
             <div className="flex text-white p-2 rounded-md bg-slate-900 flex-col-reverse h-40 overflow-auto no-scrollbar">
               {messages?.map((msg) => {
                 return <Bubble msg={msg} key={msg._id}></Bubble>;
@@ -113,7 +116,7 @@ export default function MatchCard() {
         />
         <div className="grid md:flex md:flex-row md:justify-between">
           <Button
-            text="new message"
+            text={t("new_message")}
             color="slate"
             action={() => {
               generateMessage();
@@ -124,7 +127,7 @@ export default function MatchCard() {
           </Button>
 
           <Button
-            text="skip match"
+            text={t("skip_match")}
             color="slate"
             action={() => {
               nextMatch();
@@ -135,7 +138,7 @@ export default function MatchCard() {
           </Button>
 
           <Button
-            text="send message"
+            text={t("send_message")}
             color="emerald"
             action={() => {
               sendMessage(match, message);

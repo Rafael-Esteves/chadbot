@@ -1,0 +1,27 @@
+{
+"selected_matches": "Matches selecionados",
+"manage_subscription": "Gerenciar assinatura",
+"info": "Informações",
+"logout" : "Sair",
+"auto_chat": "Bate-papo automático",
+"no_conversations": "Não há conversas em sua vez ou novos matches para abrir. Volte a arrastar 🔥",
+"refresh": "Atualizar",
+
+"older_messages": "Role para ler mensagens mais antigas",
+"new_message": "Nova mensagem",
+"skip_match": "Pular match",
+"send_message": "Enviar mensagem",
+
+"trial_expired": "Ops! Parece que seu período experimental expirou.",
+"continue_using": "Para continuar usando o Chadbot, assine por R$19/mês.",
+"cancel_anytime": "Você pode cancelar a qualquer momento!",
+
+"subscriber_only": "Ops! Parece que esta é uma funcionalidade exclusiva para assinantes",
+"unlock_feature":"Para desbloquear todos os recursos do Chadbot, assine agora por apenas R$19/mês.",
+
+"selected_matches_description": "Matches selecionados são destacados em verde e estarão em loop. Os matches desmarcados serão pulados.",
+"select_all": "Selecionar tudo",
+"deselect_all": "Desmarcar tudo",
+
+"generate_message": "Gerar mensagem"
+}

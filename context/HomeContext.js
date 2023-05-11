@@ -48,7 +48,6 @@ export const HomeProvider = (props) => {
   }, [yourTurnMatches]);
 
   useEffect(() => {
-    setLoading(true);
     if (index == -1) {
       if (!matches) fetchMatches();
       if (!subscription) fetchSubscription();
@@ -211,10 +210,10 @@ export const HomeProvider = (props) => {
   }, [autoLikeRecs]);
 
   useEffect(() => {
+    setMessage();
+    setSelectedInterest();
+    setMessages([]);
     if (match) {
-      setMessage();
-      setSelectedInterest();
-      setMessages([]);
       const matchEffect = async () => {
         const profile = await api.getProfile(match.person._id);
         setProfile(profile);
@@ -345,11 +344,11 @@ export const HomeProvider = (props) => {
       profile.distance_mi
     } miles) away from each other. ${phoneString} ${instaString}\n Respond in the natural language of ${
       user.pos_info.country.name
-    }.\n Text like a human would. Use informal language. Do NOT compliment. Reply with only ONE sentence. Do NOT talk about the pandemic. You are NOT an AI assistant. Reply ONLY with the content of text message to be sent.  \n`;
+    }.\n Text like a human would. Use informal language. Do NOT compliment. Reply with only ONE sentence. Do NOT talk about the pandemic. You are NOT an AI assistant. Reply ONLY with the content of text message to be sent. Your response should be exploratory.  \n`;
 
-    const opener = `Send the first text`;
+    const opener = ``;
 
-    const reply = `Send your reply.`;
+    const reply = ``;
 
     const systemMsg = rawMessages.length ? context + reply : context + opener;
     // const systemMsg = "Do not respond.";
@@ -393,7 +392,8 @@ export const HomeProvider = (props) => {
       presence_penalty: -0.5,
     };
 
-    const msgObject = await api.generateMessage(chatBody);
+    // const msgObject = await api.generateMessage(chatBody);
+    const msgObject = "msg";
 
     console.log("Pre processed:", msgObject.content);
 

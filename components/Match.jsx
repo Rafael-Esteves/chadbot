@@ -1,9 +1,12 @@
 import { HomeContext } from "@/context/HomeContext";
 import { useContext } from "react";
+import useTranslation from "next-translate/useTranslation";
 
 export default function Match({ selected, setShowSelectedMatches, match }) {
   const { selectedMatches, setSelectedMatches, setMatch } =
     useContext(HomeContext);
+  const { t } = useTranslation("main");
+
   return (
     <div className="flex flex-row h-24 border-b border-slate-400">
       <div
@@ -39,7 +42,7 @@ export default function Match({ selected, setShowSelectedMatches, match }) {
         }}
         className="h-full align-middle items-center flex self-center ml-auto  uppercase text-sm bg-slate-500 hover:bg-slate-600 p-2"
       >
-        Generate message
+        {t("generate_message")}
       </button>
     </div>
   );
