@@ -392,8 +392,7 @@ export const HomeProvider = (props) => {
       presence_penalty: -0.5,
     };
 
-    // const msgObject = await api.generateMessage(chatBody);
-    const msgObject = "msg";
+    const msgObject = await api.generateMessage(chatBody);
 
     console.log("Pre processed:", msgObject.content);
 
