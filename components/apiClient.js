@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export class API {
-  constructor() {
+  constructor(token = "") {
     if (window.location.pathname.includes("/main")) {
       if (
         localStorage.getItem("tinder_api_key") &&
@@ -11,7 +11,7 @@ export class API {
         this.customer_id = localStorage.getItem("customer_id");
       } else window.location.href = "/";
     } else {
-      this.token = "";
+      this.token = token;
     }
     this.instance = axios.create({
       baseURL: window.location.origin,
@@ -19,9 +19,10 @@ export class API {
   }
 
   //stripe
-  getCustomer = async (phone) => {
+  getCustomer = async (phone, user) => {
     const response = await this.instance.post("/api/get-customer", {
       phone: phone,
+      user: user,
     });
     return response.data;
   };

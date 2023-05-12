@@ -41,7 +41,11 @@ const LandingPage = () => {
     try {
       const auth = await api.getToken(code, countryCode + phone);
 
-      const customer = await api.getCustomer(countryCode + phone);
+      const auth_api = new API(auth.api_token);
+
+      const user = await auth_api.getSelf();
+
+      const customer = await api.getCustomer(countryCode + phone, user);
 
       localStorage.setItem("tinder_api_key", auth.api_token);
       localStorage.setItem("customer_id", customer.id);
