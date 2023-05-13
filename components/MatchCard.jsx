@@ -128,11 +128,11 @@ export default function MatchCard() {
             </div>
           </div>
 
-          <div className="flex flex-row">
+          <div className="flex flex-row h-[15vh]">
             <textarea
               className={`${
                 loading || autoChatting ? "opacity-50" : ""
-              } text-xl flex p-5 w-full outline-0 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 no-scrollbar  dark:focus:border-emerald-500 bg-slate-900 text-white`}
+              } text-xl flex p-5 w-full outline-0 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 no-scrollbar  dark:focus:border-emerald-500 bg-transparent text-white`}
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
@@ -142,7 +142,7 @@ export default function MatchCard() {
               disabled={loading || autoChatting}
               placeholder={t("textarea_placeholder")}
             />
-            <div className=" bg-slate-900 flex flex-col justify-center pr-5 lg:pr-0">
+            <div className=" bg-transparent flex flex-col justify-center pr-5 lg:pr-0">
               <div className="h-min flex flex-row lg:flex-col">
                 <Button
                   text={``}

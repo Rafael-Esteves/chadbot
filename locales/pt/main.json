@@ -24,7 +24,7 @@
 "deselect_all": "Desmarcar tudo",
 
 "generate_message": "Gerar mensagem",
-"textarea_placeholder": "Digite a sua mensagem ou clique no botão 🔁 para gerar uma",
+"textarea_placeholder": "Clique no 🔁 para gerar uma mensagem",
 
   "info_2": "Seus interesses e a sua bio serão usados para contextualizar o ChatGPT, ou seja, quanto mais informações você tiver no seu perfil, melhores serão as mensagens.",
   "info_1": "Ative as respostas automáticas para responder automaticamente a cada 5 minutos!"
