@@ -62,7 +62,7 @@ export default function Home() {
                 label={t("auto_chat") + " 🤖"}
               />
             </div>
-            <div className="flex flex-col px-10 py-5 ">
+            <div className="flex flex-col px-10 py-5 gap-y-1">
               <Button
                 text={t("logout")}
                 action={() => {
