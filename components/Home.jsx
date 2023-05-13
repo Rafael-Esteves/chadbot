@@ -42,70 +42,68 @@ export default function Home() {
       <InfoModal />
 
       <div className="flex flex-col h-screen overflow-auto">
-        {!autoChatting && (
-          <div className="flex flex-row justify-stretch content-stretch items-stretch h-screen">
-            <div className="flex flex-col w-[20vw]">
-              <div className="mt-10 mb-4 flex justify-center">
-                <Switch
-                  id="flexSwitchCheckDefault"
-                  checked={autoChatting}
-                  action={() => {
-                    if (!autoChatting) {
-                      setShowSelectedMatches(true);
-                    } else {
-                      setAutoChatting(false);
-                    }
-                  }}
-                  label={t("auto_chat") + " 🤖"}
-                />
-              </div>
-              <div className="flex flex-col px-10">
-                <Button
-                  text={t("logout")}
-                  action={() => {
-                    localStorage.removeItem("tinder_api_key");
-                    localStorage.removeItem("customer_id");
-                    window.location.href = "/";
-                  }}
-                  iconFirst={true}
-                  color="violet"
-                >
-                  <LogoutIcon />
-                </Button>
-                <Button
-                  text={t("manage_subscription")}
-                  visible={
-                    typeof subscription != "undefined" &&
-                    subscription.status != "trialing"
+        <div className="flex flex-row justify-stretch content-stretch items-stretch h-screen">
+          <div className="flex flex-col w-[20vw]">
+            <div className="mt-10 mb-4 flex justify-center">
+              <Switch
+                id="flexSwitchCheckDefault"
+                checked={autoChatting}
+                action={() => {
+                  if (!autoChatting) {
+                    setShowSelectedMatches(true);
+                  } else {
+                    setAutoChatting(false);
                   }
-                  action={() => {
-                    goToPortal();
-                  }}
-                  iconFirst={true}
-                  color="violet"
-                >
-                  <LockOpenIcon />
-                </Button>
-              </div>
-              <div className="overflow-auto no-scrollbar h-full text-white ">
-                {matches &&
-                  matches.map((thisMatch) => {
-                    return (
-                      <Match
-                        selected={match?._id == thisMatch._id}
-                        match={thisMatch}
-                        key={thisMatch._id}
-                      ></Match>
-                    );
-                  })}
-              </div>
+                }}
+                label={t("auto_chat") + " 🤖"}
+              />
             </div>
-
-            <div className="">
-              <MatchCard />
+            <div className="flex flex-col px-10">
+              <Button
+                text={t("logout")}
+                action={() => {
+                  localStorage.removeItem("tinder_api_key");
+                  localStorage.removeItem("customer_id");
+                  window.location.href = "/";
+                }}
+                iconFirst={true}
+                color="violet"
+              >
+                <LogoutIcon />
+              </Button>
+              <Button
+                text={t("manage_subscription")}
+                visible={
+                  typeof subscription != "undefined" &&
+                  subscription.status != "trialing"
+                }
+                action={() => {
+                  goToPortal();
+                }}
+                iconFirst={true}
+                color="violet"
+              >
+                <LockOpenIcon />
+              </Button>
+            </div>
+            <div className="overflow-auto no-scrollbar h-full text-white ">
+              {matches &&
+                matches.map((thisMatch) => {
+                  return (
+                    <Match
+                      selected={match?._id == thisMatch._id}
+                      match={thisMatch}
+                      key={thisMatch._id}
+                    ></Match>
+                  );
+                })}
             </div>
           </div>
-        )}
+
+          <div className="">
+            <MatchCard />
+          </div>
+        </div>
       </div>
     </div>
   );
