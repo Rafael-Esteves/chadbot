@@ -142,9 +142,10 @@ export default function MatchCard() {
               disabled={loading || autoChatting}
               placeholder={t("textarea_placeholder")}
             />
-            <div className=" bg-transparent flex flex-col justify-center pr-5 lg:pr-0">
-              <div className="h-min flex flex-row lg:flex-col">
+            <div className=" bg-transparent flex flex-col justify-center lg:pr-0">
+              <div className="flex flex-row lg:flex-col h-full">
                 <Button
+                  rounded={false}
                   text={``}
                   color="slate"
                   action={() => {
@@ -152,14 +153,15 @@ export default function MatchCard() {
                   }}
                   disabled={loading || autoChatting}
                 >
-                  <div className="flex flex-row">
-                    <span className="hidden lg:block uppercase text-bold lg:mr-2">
+                  <div className="flex flex-row items-center">
+                    <span className="hidden lg:block uppercase whitespace-nowrap text-bold lg:mr-2">
                       {t("new_message")}
                     </span>
                     <ReloadIcon />
                   </div>
                 </Button>
                 <Button
+                  rounded={false}
                   text={""}
                   color="emerald"
                   action={() => {
@@ -167,10 +169,10 @@ export default function MatchCard() {
                   }}
                   disabled={loading || autoChatting}
                 >
-                  <div className="flex flex-row">
-                    <span className="hidden lg:block uppercase text-bold lg:mr-2">
+                  <div className="flex flex-row text-bold items-center">
+                    <div className="hidden lg:block whitespace-nowrap uppercase  lg:mr-2">
                       {t("send_message")}
-                    </span>
+                    </div>
                     <SendIcon />
                   </div>
                 </Button>

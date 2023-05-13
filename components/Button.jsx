@@ -6,6 +6,7 @@ export default function Button({
   disabled = false,
   iconFirst = false,
   children,
+  rounded = true,
 }) {
   return (
     <button
@@ -17,7 +18,9 @@ export default function Button({
           : color == "emerald"
           ? "bg-emerald-500 hover:bg-emerald-600"
           : "bg-violet-500 hover:bg-violet-600"
-      }  text-white  font-bold uppercase text-sm  p-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 justify-center`}
+      }  text-white  font-bold uppercase text-sm  p-3 ${
+        rounded ?? "rounded"
+      } shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 justify-center`}
       onClick={() => {
         action();
       }}
