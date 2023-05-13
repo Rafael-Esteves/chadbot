@@ -42,7 +42,7 @@ export default function SelectedMatchesModal() {
         setAutoChatting(true);
       }}
     >
-      <div className="min-w-[200px]">
+      <div className="min-w-[200px] overflow-auto no-scrollbar h-[70vh]">
         <div className="px-4 mt-4 whitespace-pre-wrap text-white">
           <p>{t("selected_matches_description")}</p>
         </div>
@@ -71,7 +71,7 @@ export default function SelectedMatchesModal() {
             }}
           />
         </div>
-        <div className="overflow-auto no-scrollbar h-96 text-white ">
+        <div className=" text-white ">
           {filteredMatches &&
             filteredMatches.map((match) => {
               const selected = selectedMatches?.includes(match);
