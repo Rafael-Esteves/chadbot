@@ -128,7 +128,7 @@ export default function MatchCard() {
             </div>
           </div>
 
-          <div className="flex flex-row h-min">
+          <div className="flex flex-row h-[15vh]">
             <textarea
               className={`${
                 loading || autoChatting ? "opacity-50" : ""
