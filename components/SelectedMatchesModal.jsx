@@ -48,7 +48,6 @@ export default function SelectedMatchesModal() {
         </div>
         <div className="px-4 mt-8 flex flex-row">
           <TextInput
-            autoFocus
             labelText="Search"
             value={searchQuery}
             onChange={(e) => {

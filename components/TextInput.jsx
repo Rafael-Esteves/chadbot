@@ -1,8 +1,7 @@
-export default function TextInput({ labelText, onChange, value, autoFocus }) {
+export default function TextInput({ labelText, onChange, value }) {
   return (
     <div class="relative h-10 w-full min-w-[200px]">
       <input
-        autoFocus={autoFocus}
         value={value}
         type="text"
         onChange={(e) => {
