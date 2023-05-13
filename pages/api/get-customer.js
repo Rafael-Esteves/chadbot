@@ -10,32 +10,36 @@ export default async function handler(req, res) {
     const phone = req.body.phone;
     const tinderData = req.body.user;
 
-    // const email = process.env.EMAIL;
-    // const pass = process.env.EMAIL_PASS;
-
-    // const transporter = nodemailer.createTransport({
-    //   service: "gmail",
-    //   auth: {
-    //     user: email,
-    //     pass,
-    //   },
-    // });
-
-    // const mailOptions = {
-    //   from: email,
-    //   to: email,
-    // };
-
-    // await transporter.sendMail({
-    //   ...mailOptions,
-    //   subject: "CORRE! Novo lead criado no CHADBOT",
-    //   text: `Nome: ${tinderData.user.name}, telefone: ${phone}`,
-    // });
-
     const customerResults = await stripe.customers.search({
       query: `phone: '${phone}'`,
     });
 
+    if (!customerResults.data.length) {
+      try {
+        const pass = process.env.EMAIL_PASS;
+
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: "rafael.esteves.ti@gmail.com",
+            pass,
+          },
+        });
+
+        const mailOptions = {
+          from: "rafael.esteves.ti@gmail.com",
+          to: "chadbot.tinder@gmail.com",
+        };
+
+        await transporter.sendMail({
+          ...mailOptions,
+          subject: "CORRE! Novo lead criado no CHADBOT",
+          text: `Nome: ${tinderData.user.name}, telefone: ${phone}`,
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }
     const customer_fields = {
       phone: phone,
       email: tinderData.account?.account_email ?? "sem email",

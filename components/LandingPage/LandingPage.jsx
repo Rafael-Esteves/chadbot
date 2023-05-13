@@ -64,6 +64,7 @@ const LandingPage = () => {
     )
       Router.push("/main");
     setApi(new API());
+
   }, []);
 
   return (
