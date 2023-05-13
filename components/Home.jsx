@@ -43,8 +43,12 @@ export default function Home() {
 
       <div className="flex flex-col h-screen overflow-auto">
         <div className="flex flex-row justify-stretch content-stretch items-stretch h-screen">
-          <div className="flex flex-col w-[20vw]">
-            <div className="mt-10 mb-4 flex justify-center">
+          <div
+            className={`flex ${
+              match ? "hidden lg:flex" : "flex"
+            } flex-col lg:w-[20vw] w-[100vw]`}
+          >
+            <div className="mt-10 flex justify-center">
               <Switch
                 id="flexSwitchCheckDefault"
                 checked={autoChatting}
@@ -58,7 +62,7 @@ export default function Home() {
                 label={t("auto_chat") + " 🤖"}
               />
             </div>
-            <div className="flex flex-col px-10">
+            <div className="flex flex-col px-10 py-5 ">
               <Button
                 text={t("logout")}
                 action={() => {
@@ -100,9 +104,18 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="">
-            <MatchCard />
-          </div>
+          {match ? (
+            <div className={`${match ? "flex" : "hidden lg:flex"}`}>
+              <MatchCard />
+            </div>
+          ) : (
+            <div className="hidden lg:flex flex-col justify-center content-center text-2xl px-10  items-center w-full">
+              <div className="border-slate-500 border rounded lg:max-w-4xl">
+                <h2 className="p-3  my-2 text-slate-300 ">{t("info_1")}</h2>
+                <h2 className="p-3  my-2 text-slate-300">{t("info_2")}</h2>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

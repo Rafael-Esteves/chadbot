@@ -176,6 +176,8 @@ export const HomeProvider = (props) => {
   const sendMessage = async (match, message) => {
     setLoading(true);
     await api.sendMessage(match._id, message);
+    setMessages(await api.getMessages(match._id));
+    setMessage("");
     //remove match from yourturn
     // setYourTurnMatches((prev) => prev.filter((m) => m._id != match?._id));
     setLoading(false);

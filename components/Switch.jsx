@@ -12,7 +12,7 @@ export default function Switch({ id, label, checked, action }) {
         }}
       />
       <label
-        className="inline-block pl-3 hover:cursor-pointer text-white text-lg text-bold uppercase"
+        className="inline-block pl-3 hover:cursor-pointer text-white text-base text-bold uppercase"
         htmlFor={id}
       >
         {label}

@@ -23,6 +23,9 @@
   "select_all": "Select all",
   "deselect_all": "Deselect all",
 
-  "generate_message": "Generate message"
+  "generate_message": "Generate message",
+  "textarea-placeholder": "Type your message...",
+  "info_2": "The stuff you write in your bio and the interests you select on Tinder will be used as context when generating messages. Make sure your Tinder profile is as rich as possible to ensure the best representation of you by the chat bot.",
+  "info_1": "Toggle auto chat to automatically respond to ongoing conversations and open new matches every 5 minutes. (Do not close the page)"
 
 }
