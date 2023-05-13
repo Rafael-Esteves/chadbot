@@ -37,7 +37,7 @@ export default function SelectedMatchesModal() {
       title="Selected Matches"
       visible={showSelectedMatches}
       setVisible={setShowSelectedMatches}
-      positiveText={t("auto_chat")}
+      positiveText={"Ok"}
       positive={() => {
         setAutoChatting(true);
       }}

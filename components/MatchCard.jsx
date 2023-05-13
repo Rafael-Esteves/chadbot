@@ -96,7 +96,7 @@ export default function MatchCard() {
           )}
         </div>
         <div className="flex flex-col lg:w-[60vw] w-[100vw]  h-full justify-end text-white">
-          <div className="flex  flex-row items-center justify-between px-10 pt-5 h-[15vh]">
+          <div className="flex border-slate-600 border-b  flex-row items-center justify-between px-10 pt-5 h-[10vh] pb-2">
             <div
               className="cursor-pointer text-2xl "
               onClick={() => {
@@ -106,7 +106,7 @@ export default function MatchCard() {
               <ArrowLeftIcon />
             </div>
             <div className="flex flex-row items-center">
-              <div className="h-[5vh] w-[5vh] rounded-full overflow-hidden mr-4">
+              <div className="h-10 w-10 rounded-full overflow-hidden mr-4">
                 <img
                   src={match.person.photos[0].processedFiles[0].url}
                   alt=""
@@ -121,18 +121,18 @@ export default function MatchCard() {
           <div>
             {/* <p className="text-slate-400">{t("older_messages")}</p> */}
             {/* the container for the bubbles needs to have a fixed height to work properly */}
-            <div className=" h-[65vh] flex text-white p-2  flex-col-reverse overflow-auto no-scrollbar">
+            <div className=" h-[75vh] flex text-white p-2  flex-col-reverse overflow-auto no-scrollbar">
               {messages?.map((msg) => {
                 return <Bubble msg={msg} key={msg._id}></Bubble>;
               })}
             </div>
           </div>
 
-          <div className="min-h-20">
+          <div className="flex flex-row">
             <textarea
               className={`${
                 loading || autoChatting ? "opacity-50" : ""
-              } text-xl flex p-3 w-full outline-0 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 no-scrollbar  dark:focus:border-emerald-500 bg-slate-900 text-white h-[15vh]`}
+              } text-xl flex p-5 w-full outline-0 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 no-scrollbar  dark:focus:border-emerald-500 bg-slate-900 text-white`}
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
@@ -142,40 +142,40 @@ export default function MatchCard() {
               disabled={loading || autoChatting}
               placeholder={t("textarea_placeholder")}
             />
-          </div>
-          <div className="px-10 pb-5 grid md:flex md:flex-row md:justify-between min-h-[15] bg-slate-900">
-            <Button
-              text={`${t("new_message")}`}
-              color="slate"
-              action={() => {
-                generateMessage();
-              }}
-              disabled={loading || autoChatting}
-            >
-              <ReloadIcon />
-            </Button>
-
-            {/* <Button
-            text={t("skip_match")}
-            color="slate"
-            action={() => {
-              nextMatch();
-            }}
-            disabled={loading || autoChatting}
-          >
-            <ForwardIcon />
-          </Button> */}
-
-            <Button
-              text={t("send_message")}
-              color="emerald"
-              action={() => {
-                sendMessage(match, message);
-              }}
-              disabled={loading || autoChatting}
-            >
-              <SendIcon />
-            </Button>
+            <div className=" bg-slate-900 flex flex-col justify-center pr-5 lg:pr-0">
+              <div className="h-min flex flex-row lg:flex-col">
+                <Button
+                  text={``}
+                  color="slate"
+                  action={() => {
+                    generateMessage();
+                  }}
+                  disabled={loading || autoChatting}
+                >
+                  <div className="flex flex-row">
+                    <span className="hidden lg:block uppercase text-bold lg:mr-2">
+                      {t("new_message")}
+                    </span>
+                    <ReloadIcon />
+                  </div>
+                </Button>
+                <Button
+                  text={""}
+                  color="emerald"
+                  action={() => {
+                    sendMessage(match, message);
+                  }}
+                  disabled={loading || autoChatting}
+                >
+                  <div className="flex flex-row">
+                    <span className="hidden lg:block uppercase text-bold lg:mr-2">
+                      {t("send_message")}
+                    </span>
+                    <SendIcon />
+                  </div>
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
