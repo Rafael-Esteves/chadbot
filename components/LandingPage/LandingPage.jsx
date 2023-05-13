@@ -31,6 +31,7 @@ const LandingPage = () => {
       await api.sendSms(countryCode + phone);
       setShowCodeInput(true);
     } catch (err) {
+      console.log(err);
       setError(err.message ?? "There was an error.");
     }
     setLoading(false);
@@ -64,7 +65,6 @@ const LandingPage = () => {
     )
       Router.push("/main");
     setApi(new API());
-
   }, []);
 
   return (

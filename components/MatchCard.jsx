@@ -22,37 +22,26 @@ export default function MatchCard() {
     selectedInterest,
     setSelectedInterest,
     yourTurnMatches,
+    matches,
   } = useContext(HomeContext);
   const { t } = useTranslation("main");
 
   return (
     match &&
-    yourTurnMatches && (
-      <div className="flex flex-col text-center justify-items-center justify-center">
-        <div className="grid justify-center">
-          <img
-            className="h-40 w-40 rounded-full overflow-hidden"
-            src={match.person.photos[0].processedFiles[0].url}
-            alt=""
-          />
-        </div>
-
-        <div className="text-xl my-5 text-white">{match.person.name}</div>
-
-        {!loading && messages?.length > 0 && (
-          <div>
-            <p className="text-slate-400">{t("older_messages")}</p>
-            <div className="flex text-white p-2 rounded-md bg-slate-900 flex-col-reverse h-40 overflow-auto no-scrollbar">
-              {messages?.map((msg) => {
-                return <Bubble msg={msg} key={msg._id}></Bubble>;
-              })}
-            </div>
+    matches && (
+      <div className="flex flex-row-reverse text-center justify-items-center justify-center h-full">
+        <div className="flex flex-col overflow-auto no-scrollbar w-[20vw]  h-full">
+          <div className="grid justify-center max-h-[50vh] min-h-[25vh] w-full overflow-hidden">
+            <img
+              className="overflow-hidden"
+              src={match.person.photos[0].processedFiles[0].url}
+              alt=""
+            />
           </div>
-        )}
 
-        {!loading &&
-          !messages?.length &&
-          (interests?.length > 0 || match.person.bio) && (
+          <div className="text-xl my-5 text-white">{match.person.name}</div>
+
+          {(interests?.length > 0 || match.person.bio) && (
             <div className="text-white">
               {/* <div className="text-slate-400 w-full text-left  flex items-center justify-center align-center flex-row">
                 <div className="md:max-w-xl text-center">
@@ -94,39 +83,51 @@ export default function MatchCard() {
                     );
                 })}
               </div>
-              {!loading && match.person.bio && !messages?.length && (
+              {true && (
                 <div
                   dangerouslySetInnerHTML={{ __html: match.person.bio }}
                 ></div>
               )}
             </div>
           )}
+        </div>
+        <div className="flex flex-col w-[60vw]  h-full justify-end">
+          {messages?.length > 0 && (
+            <div>
+              {/* <p className="text-slate-400">{t("older_messages")}</p> */}
+              <div className=" h-full flex text-white p-2  flex-col-reverse overflow-auto no-scrollbar">
+                {messages?.map((msg) => {
+                  return <Bubble msg={msg} key={msg._id}></Bubble>;
+                })}
+              </div>
+            </div>
+          )}
 
-        <textarea
-          className={`${
-            loading || autoChatting ? "opacity-50" : ""
-          } text-xl mb-5 block p-2.5 w-full rounded-lg   outline-0 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500 bg-slate-900 text-white mt-5`}
-          value={message}
-          onChange={(e) => {
-            setMessage(e.target.value);
-          }}
-          rows={5}
-          cols={50}
-          disabled={loading || autoChatting}
-        />
-        <div className="grid md:flex md:flex-row md:justify-between">
-          <Button
-            text={t("new_message")}
-            color="slate"
-            action={() => {
-              generateMessage();
+          <textarea
+            className={`${
+              loading || autoChatting ? "opacity-50" : ""
+            } text-xl mb-5 block p-2.5 w-full outline-0 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500 bg-slate-900 text-white`}
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value);
             }}
+            rows={3}
+            cols={50}
             disabled={loading || autoChatting}
-          >
-            <ReloadIcon />
-          </Button>
+          />
+          <div className="grid md:flex md:flex-row md:justify-between">
+            <Button
+              text={`${t("new_message")}`}
+              color="slate"
+              action={() => {
+                generateMessage();
+              }}
+              disabled={loading || autoChatting}
+            >
+              <ReloadIcon />
+            </Button>
 
-          <Button
+            {/* <Button
             text={t("skip_match")}
             color="slate"
             action={() => {
@@ -135,18 +136,19 @@ export default function MatchCard() {
             disabled={loading || autoChatting}
           >
             <ForwardIcon />
-          </Button>
+          </Button> */}
 
-          <Button
-            text={t("send_message")}
-            color="emerald"
-            action={() => {
-              sendMessage(match, message);
-            }}
-            disabled={loading || autoChatting}
-          >
-            <SendIcon />
-          </Button>
+            <Button
+              text={t("send_message")}
+              color="emerald"
+              action={() => {
+                sendMessage(match, message);
+              }}
+              disabled={loading || autoChatting}
+            >
+              <SendIcon />
+            </Button>
+          </div>
         </div>
       </div>
     )

@@ -13,7 +13,7 @@ export default function Base(props) {
       </Head>
       <main
         className={
-          "flex flex-col items-center justify-center h-full bg-slate-800"
+          "flex flex-col items-center justify-center h-screen bg-slate-800"
         }
       >
         <HomeProvider>{props.children}</HomeProvider>

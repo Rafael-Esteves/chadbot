@@ -14,6 +14,8 @@ export default function SelectedMatchesModal() {
     selectedMatches,
     showSelectedMatches,
     setShowSelectedMatches,
+    autoChatting,
+    setAutoChatting,
   } = useContext(HomeContext);
 
   const [filteredMatches, setFilteredMatches] = useState([]);
@@ -35,6 +37,10 @@ export default function SelectedMatchesModal() {
       title="Selected Matches"
       visible={showSelectedMatches}
       setVisible={setShowSelectedMatches}
+      positiveText={t("auto_chat")}
+      positive={() => {
+        setAutoChatting(true);
+      }}
     >
       <div className="min-w-[200px]">
         <div className="px-4 mt-4 whitespace-pre-wrap text-white">

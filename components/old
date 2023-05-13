@@ -1,0 +1,68 @@
+        <div className="mx-10 flex md:flex-row flex-col justify-between ">
+          {/* <Button
+            action={() => {
+              setShowSelectedMatches((prev) => !prev);
+            }}
+            text={
+              t("selected_matches") + " " + selectedMatches?.length ??
+              "loading..."
+            }
+            iconFirst={true}
+            color="violet"
+          >
+            <ListIcon />
+          </Button> */}
+          <Button
+            text={t("logout")}
+            action={() => {
+              localStorage.removeItem("tinder_api_key");
+              localStorage.removeItem("customer_id");
+              window.location.href = "/";
+            }}
+            iconFirst={true}
+            color="violet"
+          >
+            <LogoutIcon />
+          </Button>
+          <Button
+            text={t("manage_subscription")}
+            visible={
+              typeof subscription != "undefined" &&
+              subscription.status != "trialing"
+            }
+            action={() => {
+              goToPortal();
+            }}
+            iconFirst={true}
+            color="violet"
+          >
+            <LockOpenIcon />
+          </Button>
+          {/* <Button
+            text={t("info")}
+            action={() => {
+              setShowInfoModal((prev) => !prev);
+            }}
+            iconFirst={true}
+            color="violet"
+          >
+            <InfoIcon />
+          </Button> */}
+        </div>
+
+        {/* {!yourTurnMatches?.length && !match && !loading && !autoChatting (
+          <div className="p-3 text-xl text-center my-5 text-white flex flex-col content-center">
+            {" "}
+            <p className="text-bold text-lg mb-5">{t("no_conversations")}</p>
+            <Button
+              text={t("refresh")}
+              action={() => {
+                restart();
+              }}
+              visible={!autoChatting}
+              disabled={loading}
+            >
+              <ReloadIcon />
+            </Button>
+          </div>
+        )} */}

@@ -8,15 +8,19 @@ export default function Match({ selected, setShowSelectedMatches, match }) {
   const { t } = useTranslation("main");
 
   return (
-    <div className="flex flex-row h-24 border-b border-slate-400">
+    <div className="flex flex-row h-24 border-b border-slate-700">
       <div
         className={`flex flex-row py-2 align-middle cursor-pointer ${
           selected
-            ? "bg-emerald-100 hover:bg-emerald-400"
-            : "bg-slate-100 hover:bg-slate-400"
+            ? "bg-emerald-700 hover:bg-emerald-600"
+            : "bg-slate-800 hover:bg-slate-700"
         } text-black w-full`}
         onClick={() => {
-          setMatch(match);
+          if (selected) {
+            setMatch();
+          } else {
+            setMatch(match);
+          }
         }}
         key={match._id}
       >
@@ -27,7 +31,7 @@ export default function Match({ selected, setShowSelectedMatches, match }) {
             className="object-cover"
           />
         </div>
-        <div className="flex items-center text-emerald-600">
+        <div className="flex items-center text-slate-100">
           <div>{match.person.name}</div>
         </div>
       </div>
