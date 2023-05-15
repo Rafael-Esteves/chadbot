@@ -44,25 +44,11 @@ export default function Home() {
       <div className="flex flex-col h-screen overflow-auto">
         <div className="flex flex-row justify-stretch content-stretch items-stretch h-screen">
           <div
-            className={`flex ${
+            className={`pt-10 flex ${
               match ? "hidden lg:flex" : "flex"
             } flex-col lg:w-[20vw] w-[100vw]`}
           >
-            <div className="mt-10 flex justify-center">
-              <Switch
-                id="flexSwitchCheckDefault"
-                checked={autoChatting}
-                action={() => {
-                  if (!autoChatting) {
-                    setShowSelectedMatches(true);
-                  } else {
-                    setAutoChatting(false);
-                  }
-                }}
-                label={t("auto_chat") + " 🤖"}
-              />
-            </div>
-            <div className="flex flex-col px-10 py-5 gap-y-1">
+            <div className="flex flex-col px-10 gap-y-1">
               <Button
                 text={t("logout")}
                 action={() => {
@@ -89,6 +75,20 @@ export default function Home() {
               >
                 <LockOpenIcon />
               </Button>
+            </div>
+            <div className="my-8 flex justify-center">
+              <Switch
+                id="flexSwitchCheckDefault"
+                checked={autoChatting}
+                action={() => {
+                  if (!autoChatting) {
+                    setShowSelectedMatches(true);
+                  } else {
+                    setAutoChatting(false);
+                  }
+                }}
+                label={t("auto_chat") + " 🤖"}
+              />
             </div>
             <div className="overflow-auto no-scrollbar h-full text-white ">
               {matches &&
