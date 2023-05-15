@@ -210,7 +210,7 @@ export const HomeProvider = (props) => {
   }, [autoLikeRecs]);
 
   useEffect(() => {
-    setMessage();
+    setMessage("");
     setSelectedInterest();
     setMessages([]);
     if (match) {
@@ -254,6 +254,7 @@ export const HomeProvider = (props) => {
 
   const generateMessage = async () => {
     if (!self || !match) return;
+    setLoading(true);
 
     const subscription = await api.getSubscription();
 
@@ -262,12 +263,10 @@ export const HomeProvider = (props) => {
       return;
     }
 
-    setLoading(true);
-
-    if (messages.length > 40) {
-      !autoChatting && setLoading(false);
-      return;
-    }
+    // if (messages.length > 40) {
+    //   !autoChatting && setLoading(false);
+    //   return;
+    // }
 
     const message = await craftMessage(match, profile, self, messages);
 
@@ -283,6 +282,7 @@ export const HomeProvider = (props) => {
       const rawMessages = await api.getMessages(match._id);
       const message = await craftMessage(match, profile, self, rawMessages);
       await api.sendMessage(match._id, message);
+      setMatch(match);
     }
   };
 
