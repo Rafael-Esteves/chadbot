@@ -16,7 +16,11 @@ export default function Match({ selected, setShowSelectedMatches, match }) {
             : "bg-slate-100 hover:bg-slate-400"
         } text-black w-full`}
         onClick={() => {
-          setMatch(match);
+          if (selected)
+            setSelectedMatches(
+              selectedMatches.filter((m) => m._id != match._id)
+            );
+          else setSelectedMatches(selectedMatches.concat(match));
         }}
         key={match._id}
       >
