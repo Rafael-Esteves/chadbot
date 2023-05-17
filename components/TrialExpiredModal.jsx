@@ -17,7 +17,7 @@ export default function TrialExpiredModal() {
       positive={() => {
         goToPortal();
       }}
-      positiveText="Add payment method"
+      positiveText={t("see_plans")}
     >
       <div className="text-white p-5">
         <h2 className="text-xl mb-2">{t("trial_expired")}</h2>

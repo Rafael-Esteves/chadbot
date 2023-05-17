@@ -22,6 +22,8 @@
   "selected_matches_description": "Selected matches are highlighted in green and will be on the loop. Deselected matches will be skipped.",
   "select_all": "Select all",
   "deselect_all": "Deselect all",
+  "see_plans": "See plans",
+
 
   "generate_message": "Generate message",
   "textarea-placeholder": "Click 🔁 to generate a message",

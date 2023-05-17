@@ -17,7 +17,7 @@ export default function LockedFeatureModal() {
       positive={() => {
         goToPortal();
       }}
-      positiveText="Add payment method"
+      positiveText={t("see_plans")}
       setVisible={setShowLockedFeatureModal}
     >
       <div className="text-white p-5">
