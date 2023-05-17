@@ -65,7 +65,7 @@ export default function Home() {
                 text={t("manage_subscription")}
                 visible={
                   typeof subscription != "undefined" &&
-                  subscription.status != "trialing"
+                  subscription?.status != "trialing"
                 }
                 action={() => {
                   goToPortal();
