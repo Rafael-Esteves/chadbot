@@ -14,8 +14,9 @@ export default function SelectedMatchesModal() {
     selectedMatches,
     showSelectedMatches,
     setShowSelectedMatches,
-    autoChatting,
     setAutoChatting,
+    subscription,
+    setShowLockedFeatureModal,
   } = useContext(HomeContext);
 
   const [filteredMatches, setFilteredMatches] = useState([]);
@@ -39,7 +40,8 @@ export default function SelectedMatchesModal() {
       setVisible={setShowSelectedMatches}
       positiveText={"Ok"}
       positive={() => {
-        setAutoChatting(true);
+        if (subscription?.status == "active") setAutoChatting(true);
+        else setShowLockedFeatureModal(true);
       }}
     >
       <div className="min-w-[200px] overflow-auto no-scrollbar h-[70vh]">
