@@ -13,20 +13,14 @@ export default async function handler(req, res) {
 
     const response = await openai.createChatCompletion(req.body.chat_body);
 
-    let message = "";
+    console.log("response", response);
 
-    // console.log(response.data);
-
-    for (const chunk of response.data) {
-      console.log(chunk, "chunk");
-      // console.log(decoder.decode(chunk));
-      // message = message.concat(chunk.choices[0].delta);
-      // console.log(message);
-      // res.write(message);
-    }
-
-    res.status(200).send(message);
+    const message = response.data.choices[0].message;
+    console.log(message);
+    res.status(200).json(message);
   } catch (err) {
     res.status(err).send(err);
   }
 }
+
+

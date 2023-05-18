@@ -151,7 +151,6 @@ export const HomeProvider = (props) => {
     }
     let intervalId;
     const autoChattingEffect = async () => {
-      await fetchMatches();
       await autoChat();
     };
     if (yourTurnMatches) {
@@ -255,7 +254,7 @@ export const HomeProvider = (props) => {
 
   const generateMessage = async () => {
     if (!self || !match) return;
-    // setLoading(true);
+    setLoading(true);
 
     const subscription = await api.getSubscription();
 
