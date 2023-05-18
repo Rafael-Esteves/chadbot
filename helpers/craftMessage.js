@@ -124,6 +124,7 @@ export const craftMessage = async (match, profile, self, rawMessages) => {
     stop: ["#", "^s*$"],
     logit_bias: { 198: -100, 25: -100, 50256: -100, 1: -100, 5540: -100 },
     presence_penalty: -0.5,
+    stream: true,
   };
 
   const msgObject = await api.generateMessage(chatBody);
