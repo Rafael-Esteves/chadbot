@@ -24,7 +24,7 @@ export default function Base(props) {
         src={`https://www.googletagmanager.com/gtag/js?id=AW-11182100754`}
       ></Script>
       <Script
-        id="google-analytics"
+        id="google-ads"
         dangerouslySetInnerHTML={{
           __html: `
         window.dataLayer = window.dataLayer || [];
@@ -57,6 +57,7 @@ export default function Base(props) {
 
       {/* TikTok Ads */}
       <Script
+        id="tik-fodas"
         dangerouslySetInnerHTML={{
           __html: `
 !function (w, d, t) {
