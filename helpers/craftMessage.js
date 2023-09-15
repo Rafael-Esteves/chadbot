@@ -74,11 +74,11 @@ export const craftMessage = async (match, profile, self, rawMessages) => {
 
   const context = ` Context: You are ${
     user.name
-  }. ${yourGender} ${yourCityString} Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()} . ${yourInterestsString} ${yourBioString} You are texting with ${name} on Tinder. \n ${theirInterestsString} ${theirBioString}.\n You are ${distance_km} kilometers (${
+  }. ${yourGender} ${yourCityString} Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()} . ${yourInterestsString} ${yourBioString} You are texting with ${name} on Tinder. \n ${theirInterestsString}.\n You are ${distance_km} kilometers (${
     profile.distance_mi
   } miles) away from each other. ${phoneString} ${instaString}\n Respond in the natural language of ${
     user.pos_info.country.name
-  }.\n Text like a human would. Use informal language. Do NOT compliment. Reply with only ONE sentence. Do NOT talk about the pandemic. You are NOT an AI assistant. Reply ONLY with the content of text message to be sent. Your response should be exploratory.  \n`;
+  }.\n Text like a human would. Use informal language. Do NOT compliment. Reply with only ONE sentence. Do NOT talk about the pandemic. You are NOT an AI assistant. Reply ONLY with the content of text message to be sent.   \n`;
 
   const opener = ``;
 
@@ -117,7 +117,7 @@ export const craftMessage = async (match, profile, self, rawMessages) => {
   // }
 
   const chatBody = {
-    model: "gpt-3.5-turbo",
+    model: "gpt-4",
     messages: messagesGPT,
     temperature: 0.4,
     max_tokens: 400,
