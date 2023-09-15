@@ -38,13 +38,6 @@ const LandingPage = () => {
     setLoading(false);
   };
 
-  const login = () => {
-      localStorage.setItem("tinder_api_key", token);
-      localStorage.setItem("customer_id", 1);
-
-      Router.push("/main");
-  }
-
   const getToken = async () => {
     setLoading(true);
     try {
@@ -97,21 +90,63 @@ const LandingPage = () => {
         <Alert message={error} type={"error"}></Alert>
         <div className=" bg-slate-800 text-left rounded-lg">
           <h3 className={"pt-5 px-5 text-2xl text-white"}>
-            {t("login_with")} Tinder API Token
+            {t("login_with")} SMS
           </h3>
 
+          <div className={"grid space-y-2 md:space-y-0 md:flex p-5"}>
+            <select
+              className={"p-3 text-white bg-slate-900 outline-0"}
+              onChange={(e) => {
+                setCountryCode(e.target.value);
+              }}
+            >
+              <option value="+1">🇺🇸 +1</option>
+              <option value="+55">🇧🇷 +55</option>
+              <option value="+44">🇬🇧 +44</option>
+              <option value="+47">🇳🇴 +47</option>
+              <option value="+46">🇸🇪 +46</option>
+              <option value="+61">🇦🇺 +61</option>
+              <option value="+33">🇫🇷 +33</option>
+              <option value="+49">🇩🇪 +49</option>
+              <option value="+81">🇯🇵 +81</option>
+              <option value="+86">🇨🇳 +86</option>
+              <option value="+91">🇮🇳 +91</option>
+              <option value="+27">🇿🇦 +27</option>
+            </select>
+            <input
+              className={"p-3 text-white bg-slate-900 outline-0"}
+              value={phone}
+              type="text"
+              placeholder="11988887777"
+              onChange={(input) => {
+                const onlyNums = input.target.value.replace(/[^0-9]/g, "");
+                setNumber(onlyNums);
+              }}
+            />
+            <button
+              disabled={loading}
+              className={` bg-emerald-500 text-white p-3 ${
+                loading ? "opacity-50" : ""
+              }`}
+              onClick={() => sendSms()}
+            >
+              {t("send_code")}
+            </button>
+          </div>
 
+          {showCodeInput && (
             <div className={" p-5 text-left"}>
               <h3 className="text-white text-2xl mb-5">
-                Tinder API Token
+                {t("confirmation_code")}
               </h3>
               <div className="flex items-stretch w-full">
                 <input
                   className={"bg-slate-900 p-3 w-full outline-0"}
-                  value={token}
+                  value={code}
                   type="text"
                   onChange={(input) => {
-                    setToken(input.target.value);
+                    const onlyNums = input.target.value.replace(/[^0-9]/g, "");
+                    setCode(onlyNums);
                   }}
                 />
                 <button
@@ -119,12 +154,13 @@ const LandingPage = () => {
                   className={`bg-emerald-500 p-3 text-white ${
                     loading ? "opacity-50" : ""
                   }`}
-                  onClick={() => login()}
+                  onClick={() => getToken()}
                 >
                   {t("login")}
                 </button>
               </div>
             </div>
+          )}
         </div>
       </div>
     </div>
