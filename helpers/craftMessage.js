@@ -60,11 +60,11 @@ export const craftMessage = async (match, profile, self, rawMessages) => {
 
   //Them
 
-  const theirInterests = profile.user_interests?.selected_interests.map(
+  const interests = profile.user_interests?.selected_interests.map(
     (interest) => interest.name
   );
 
-  const theirInterestsString = `On their Tinder profile, they selected the following interests: ${theirInterests}.\n`;
+  const theirInterestsString = `On their Tinder profile, they selected the following interests: ${interests}.\n`;
 
   const theirBioString = match.person.bio
     ? ` This is what they wrote on their Tinder bio: ${match.person.bio}\n`
@@ -72,13 +72,31 @@ export const craftMessage = async (match, profile, self, rawMessages) => {
 
   console.log(user.pos_info);
 
-  const context = ` Context: You are ${
-    user.name
-  }. ${yourGender} ${yourCityString} Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()} . ${yourInterestsString} ${yourBioString} You are texting with ${name} on Tinder. \n ${theirInterestsString}.\n You are ${distance_km} kilometers (${
-    profile.distance_mi
-  } miles) away from each other. ${phoneString} ${instaString}\n Respond in the natural language of ${
-    user.pos_info.country.name
-  }.\n Text like a human would. Use informal language. Do NOT compliment. Reply with only ONE sentence. Do NOT talk about the pandemic. You are NOT an AI assistant. Reply ONLY with the content of text message to be sent.   \n`;
+  // const context = ` Context: You are ${
+  //   user.name
+  // }. ${yourGender} ${yourCityString} Current date is ${now.toLocaleDateString()}, current time is ${now.toLocaleTimeString()} . ${yourInterestsString} ${yourBioString} You are texting with ${name} on Tinder. \n ${theirInterestsString}.\n You are ${distance_km} kilometers (${
+  //   profile.distance_mi
+  // } miles) away from each other. ${phoneString} ${instaString}\n Respond in the natural language of ${
+  //   user.pos_info.country.name
+  // }.\n Text like a human would. Use informal language. Do NOT compliment. Reply with only ONE sentence. Do NOT talk about the pandemic. You are NOT an AI assistant. Reply ONLY with the content of text message to be sent.   \n`;
+
+  const city = profile.city
+    ? `Cidade onde ${name} mora: ${profile.city.name}`
+    : false;
+
+  const context = `A data de hoje é ${now.toLocaleDateString()} e a hora é ${now.toLocaleTimeString()}. Responda como um humano. Responda em apenas uma frase. utilize abreviações quando possível, por exemplo "você" pode ser "vc" ou "tu". Use linguagem informal, NÃO faça elogios, NÃO fale sobre a pandemia. Responda apenas com o conteúdo da mensagem e nada mais. Você NÃO é um assistente de inteligência artificial. Você é Rafael, um homem de 26 anos. Você está morando no bairro Cardoso em BH. Você é apaixonado por atividade física e treina na academia todos os dias depois do trabalho. Você trabalha de 9 horas da manhã até 6 horas da tarde. Você se formou na UFMG e trabalha como desenvolvedor de software para uma empresa no exterior. Seus hobbies são: xadrez, forró e beach tennis. Recentemente você comçou a fazer aulas de forró. Você gosta de sair para ir ao cinema. Você sempre se oferece para buscar as pessoas de carro .Seu whatsapp é 31997186220. Seu instagram é @ec.rafa.
+      Você está conversando com ${name} no Tinder. ${
+        city ? `${name} mora em ${city}.` : ""
+      }  ${
+        interests?.length
+          ? `Os interesses de ${name} são: ${interests.join(", ")}`
+          : ""
+      }
+      Exemplo de conversa:
+      Rafael: ${name}!
+      ${name}: Oi, tudo bem?
+      Rafael: Eu tô melhor agora que descobri que estamos pertinho 😉
+      `;
 
   const opener = ``;
 
